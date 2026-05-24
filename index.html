@@ -1,201 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Mada Listen Rewards - Watch videos, earn rewards</title>
-<meta name="theme-color" content="#0d0f14">
-<script async src="https://js.onclckmn.com/static/onclicka.js" data-admpid="441905"></script>
-<style>
-  :root{
-    --bg:#0b0e13;
-    --bg2:#121621;
-    --card:#171c27;
-    --gold:#ffc107;
-    --gold-2:#ffb300;
-    --text:#e9ecf1;
-    --muted:#9aa3b2;
-    --border:rgba(255,193,7,.18);
-    --shadow:0 8px 24px rgba(0,0,0,.45);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-    line-height:1.5;
-    background-image:
-      radial-gradient(800px 400px at 50% -10%, rgba(255,193,7,.08), transparent 60%),
-      radial-gradient(600px 300px at 90% 0%, rgba(255,193,7,.05), transparent 70%);
-  }
-  .wrap{
-    max-width:800px;
-    margin:0 auto;
-    padding:20px 14px 40px;
-  }
-  header{
-    text-align:center;
-    padding:28px 12px 22px;
-  }
-  .logo-dot{
-    width:44px;height:44px;margin:0 auto 12px;
-    background:linear-gradient(145deg,var(--gold),var(--gold-2));
-    border-radius:12px;
-    box-shadow:0 0 20px rgba(255,193,7,.35), inset 0 1px 2px rgba(255,255,255,.3);
-    display:grid;place-items:center;
-    color:#000;font-weight:800;
-  }
-  h1{
-    margin:0;
-    font-size:clamp(1.7rem,6vw,2.4rem);
-    font-weight:800;
-    letter-spacing:.2px;
-    background:linear-gradient(180deg,#fff 0%,#ffe08a 60%,#ffc107 100%);
-    -webkit-background-clip:text;
-    -webkit-text-fill-color:transparent;
-  }
-  .subtitle{
-    margin:6px 0 0;
-    color:var(--muted);
-    font-size:clamp(.95rem,2.8vw,1.05rem);
-  }
-  main{margin-top:18px}
-  .video-container.kg-video-container{
-    position:relative;
-    background:#000;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:var(--shadow), 0 0 0 1px var(--border);
-    border:1px solid #1f2430;
-  }
-  #mainPlayer{
-    width:100%;
-    height:auto;
-    aspect-ratio:16/9;
-    display:block;
-    background:#000;
-  }
-  .player-badge{
-    position:absolute;
-    top:10px;left:10px;
-    background:rgba(0,0,0,.65);
-    backdrop-filter:blur(6px);
-    border:1px solid var(--border);
-    color:var(--gold);
-    font-size:.72rem;
-    font-weight:600;
-    padding:5px 9px;
-    border-radius:999px;
-    letter-spacing:.4px;
-    pointer-events:none;
-  }
-  .info-box{
-    margin:16px 2px 0;
-    background:linear-gradient(180deg, rgba(255,193,7,.09), rgba(255,193,7,.04));
-    border:1px solid var(--border);
-    border-radius:14px;
-    padding:12px 14px;
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    color:#f0e6c7;
-    font-size:.92rem;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
-  }
-  .info-box svg{
-    flex:0 0 20px;
-    margin-top:2px;
-    color:var(--gold);
-  }
-  .info-box strong{color:var(--gold);font-weight:700}
-  .tips{
-    margin:22px 2px 0;
-    background:var(--card);
-    border:1px solid #222838;
-    border-radius:14px;
-    padding:14px;
-  }
-  .tips h2{
-    margin:0 0 8px;
-    font-size:1rem;
-    color:#fff;
-  }
-  .tips ul{
-    margin:0; padding-left:18px; color:var(--muted); font-size:.92rem
-  }
-  .tips li{margin:4px 0}
-  footer{
-    margin-top:28px;
-    padding-top:16px;
-    border-top:1px dashed #2a3142;
-    color:#7f8797;
-    font-size:.82rem;
-    text-align:center;
-    line-height:1.6;
-  }
-  footer code{
-    background:#0f131c;
-    border:1px solid #222838;
-    padding:2px 6px;
-    border-radius:6px;
-    color:#ffda6b;
-    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-    font-size:.78rem;
-  }
-  @media (max-width:480px){
-    .wrap{padding:16px 12px 32px}
-    header{padding:22px 8px 16px}
-    .video-container.kg-video-container{border-radius:14px}
-    .info-box{font-size:.88rem}
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAST Test - HilltopAds Zone 6998413</title>
+  <script src="https://imasdk.googleapis.com/js/sdkloader/ima3.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #030712;
+      --card: #0b1220;
+      --border: rgba(255,255,255,0.08);
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #00a8e8;
+      --accent-glow: rgba(0,168,232,0.35);
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: radial-gradient(1200px 800px at 50% -10%, #0e1a2e 0%, #030712 60%, #020408 100%);
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,168,232,0.1);
+      border: 1px solid rgba(0,168,232,0.25);
+      color: #7dd3fc;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .02em;
+      margin-bottom: 12px;
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(24px, 4vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to bottom, #fff, #b6c2d6);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .player-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.02) inset;
+      backdrop-filter: blur(16px);
+    }
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #000;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06);
+    }
+    #contentVideo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #000;
+      display: block;
+    }
+    #adContainer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+    .play-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      background: radial-gradient(600px 300px at 50% 50%, rgba(0,168,232,0.18), transparent 60%),
+                  linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.65));
+      cursor: pointer;
+      transition: opacity .3s ease;
+      backdrop-filter: blur(2px);
+    }
+    .play-overlay:hover .play-button { transform: scale(1.06); }
+    .play-button {
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #00c3ff, #00a8e8 60%, #0085b8);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 30px -5px var(--accent-glow), 0 0 0 8px rgba(0,168,232,0.15), inset 0 1px 1px rgba(255,255,255,0.3);
+      animation: pulse 2.2s infinite;
+      transition: transform .2s ease;
+      cursor: pointer;
+    }
+    .play-button svg {
+      width: 34px;
+      height: 34px;
+      fill: white;
+      margin-left: 3px;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    }
+    .play-text {
+      color: #e2f6ff;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: .02em;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 10px 30px -5px var(--accent-glow), 0 0 0 0 rgba(0,168,232,0.5), inset 0 1px 1px rgba(255,255,255,0.3); }
+      70% { box-shadow: 0 10px 30px -5px var(--accent-glow), 0 0 0 18px rgba(0,168,232,0), inset 0 1px 1px rgba(255,255,255,0.3); }
+      100% { box-shadow: 0 10px 30px -5px var(--accent-glow), 0 0 0 0 rgba(0,168,232,0), inset 0 1px 1px rgba(255,255,255,0.3); }
+    }
+    .status-card {
+      margin-top: 14px;
+      background: rgba(3,7,18,0.7);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #6b7280;
+      flex-shrink: 0;
+      transition: all .3s;
+    }
+    .status-card.status-loading .status-dot { background: var(--accent); animation: dotPulse 1.4s infinite; box-shadow: 0 0 12px var(--accent-glow); }
+    .status-card.status-ad .status-dot { background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
+    .status-card.status-playing .status-dot { background: #10b981; box-shadow: 0 0 10px rgba(16,185,129,0.5); }
+    .status-card.status-error .status-dot { background: #ef4444; box-shadow: 0 0 10px rgba(239,68,68,0.5); }
+    @keyframes dotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.25);opacity:.85} }
+    .status-label { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; line-height: 1; }
+    .status-text { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.3; margin-top: 2px; }
+    .reset-btn {
+      margin-left: auto;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .2s;
+      display: none;
+    }
+    .reset-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(0,168,232,0.4); }
+    .info-box {
+      margin-top: 20px;
+      background: rgba(11,18,32,0.6);
+      border: 1px solid rgba(0,168,232,0.18);
+      border-radius: 14px;
+      padding: 14px 16px;
+      backdrop-filter: blur(8px);
+    }
+    .info-header { display: flex; gap: 12px; align-items: flex-start; }
+    .info-label {
+      font-size: 11px; font-weight: 700; color: #7dd3fc;
+      letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .info-url {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12px; color: #cbd5e1; word-break: break-all; line-height: 1.5;
+      background: rgba(0,0,0,0.3); padding: 8px 10px; border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .copy-btn {
+      flex-shrink: 0;
+      background: linear-gradient(180deg, #00b4f0, #00a8e8);
+      color: #002033; border: none; padding: 8px 14px; border-radius: 9px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 4px 14px -3px var(--accent-glow), inset 0 1px 0 rgba(255,255,255,0.3);
+      transition: transform .15s;
+    }
+    .copy-btn:hover { transform: translateY(-1px); }
+    .copy-btn:active { transform: translateY(0) scale(.98); }
+    .footer { text-align: center; margin-top: 22px; color: #64748b; font-size: 12px; }
+    @media (max-width: 640px) {
+      body { padding: 16px; align-items: flex-start; }
+      .player-card { padding: 10px; border-radius: 16px; }
+      .video-wrapper { border-radius: 10px; }
+      .play-button { width: 78px; height: 78px; }
+      .play-button svg { width: 28px; height: 28px; }
+      header { margin-bottom: 20px; }
+    }
+  </style>
 </head>
 <body>
-  <div class="wrap">
+  <div class="container">
     <header>
-      <div class="logo-dot">₲</div>
-      <h1>Mada Listen Rewards</h1>
-      <p class="subtitle">Watch videos, earn rewards</p>
+      <div class="badge"><span class="badge-dot"></span> HilltopAds</div>
+      <h1>VAST Test – Zone 6998413</h1>
+      <p>Click Play to test your VAST tag</p>
     </header>
 
-    <main>
-      <div class="video-container kg-video-container" id="playerWrapper">
-        <span class="player-badge">ONCLICKA READY</span>
-        <video
-          id="mainPlayer"
-          controls
-          playsinline
-          preload="metadata"
-          poster="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg"
-        >
-          <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
-          Your browser does not support HTML5 video.
+    <div class="player-card">
+      <div class="video-wrapper" id="videoWrapper">
+        <video id="contentVideo" playsinline webkit-playsinline preload="metadata" poster="https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217">
+          <source src="https://storage.googleapis.com/gvabox/media/samples/BigBuckBunny.mp4" type="video/mp4">
         </video>
+        <div id="adContainer"></div>
+        <div id="playOverlay" class="play-overlay" role="button" aria-label="Play and test VAST">
+          <button class="play-button" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+          </button>
+          <div class="play-text">Play & Test VAST</div>
+        </div>
       </div>
 
-      <div class="info-box">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 2l1.8 3.6 4 .5-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4L6.2 6.1l4-.5L12 2z" stroke="currentColor" stroke-width="1.5" fill="currentColor" opacity=".9"/>
-        </svg>
-        <div><strong>OnClickA Video Ad Spot ID: 6119827</strong> is active. Ads will play before/during video.</div>
+      <div id="statusCard" class="status-card status-ready">
+        <div class="status-dot"></div>
+        <div>
+          <div class="status-label">STATUS</div>
+          <div id="statusText" class="status-text">Ready</div>
+        </div>
+        <button id="resetBtn" class="reset-btn">Test Again</button>
       </div>
+    </div>
 
-      <div class="tips">
-        <h2>Fast setup tips</h2>
-        <ul>
-          <li>Optimized for 4G phones in Malawi – lightweight, no heavy libraries.</li>
-          <li>Keep videos short (30–90s) for higher completion & rewards.</li>
-          <li>Use Wi-Fi to upload your own MP4 to your CDN.</li>
-        </ul>
+    <div class="info-box">
+      <div class="info-header">
+        <div style="flex:1; min-width:0;">
+          <div class="info-label">VAST TAG URL</div>
+          <div class="info-url" id="vastUrl"></div>
+        </div>
+        <button id="copyBtn" class="copy-btn">Copy</button>
       </div>
-    </main>
+    </div>
 
-    <footer>
-      Replace the video source with your own content. In OnClickA dashboard, set Selector to <code>.video-container.kg-video-container</code> if using Overlay mode.
-    </footer>
+    <div class="footer">Powered by Google IMA SDK • HilltopAds Blue #00a8e8</div>
   </div>
+
+  <script>
+    const VAST_TAG = "https://mellow-habit.com/ddmDF-zOd.GdNfvPZZGTUw/feJm_9au/ZjUBljk/PFTJYG5ZOITtgV0PMYT/MQt/NQjpkI5oOwDLQFxCNXwp";
+    
+    let video, adContainer, adDisplayContainer, adsLoader, adsManager;
+    let playOverlay, statusCard, statusText, resetBtn;
+    let isAdPlaying = false;
+    let adsInitialized = false;
+
+    const $ = (id) => document.getElementById(id);
+
+    function updateStatus(text, state = 'ready') {
+      statusText.textContent = text;
+      statusCard.className = 'status-card status-' + state;
+    }
+
+    function initIMA() {
+      video = $('contentVideo');
+      adContainer = $('adContainer');
+      playOverlay = $('playOverlay');
+      statusCard = $('statusCard');
+      statusText = $('statusText');
+      resetBtn = $('resetBtn');
+
+      $('vastUrl').textContent = VAST_TAG;
+
+      try {
+        adDisplayContainer = new google.ima.AdDisplayContainer(adContainer, video);
+        adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+
+        adsLoader.addEventListener(
+          google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
+          onAdsManagerLoaded,
+          false
+        );
+        adsLoader.addEventListener(
+          google.ima.AdErrorEvent.Type.AD_ERROR,
+          onAdError,
+          false
+        );
+
+        video.addEventListener('ended', onContentEnded);
+        window.addEventListener('resize', onResize);
+
+        playOverlay.addEventListener('click', onUserPlay);
+        resetBtn.addEventListener('click', () => location.reload());
+        $('copyBtn').addEventListener('click', copyVast);
+
+        updateStatus('Ready', 'ready');
+      } catch (e) {
+        updateStatus('IMA failed to load', 'error');
+        console.error(e);
+      }
+    }
+
+    function onUserPlay() {
+      if (adsInitialized) return;
+      adsInitialized = true;
+      
+      // Mobile requires user gesture
+      adDisplayContainer.initialize();
+      video.load();
+      video.removeAttribute('controls');
+      
+      playOverlay.style.opacity = '0';
+      playOverlay.style.pointerEvents = 'none';
+      setTimeout(() => { playOverlay.style.display = 'none'; }, 300);
+      
+      requestAds();
+    }
+
+    function requestAds() {
+      updateStatus('Requesting ad...', 'loading');
+      
+      const adsRequest = new google.ima.AdsRequest();
+      adsRequest.adTagUrl = VAST_TAG;
+      adsRequest.linearAdSlotWidth = video.clientWidth;
+      adsRequest.linearAdSlotHeight = video.clientHeight;
+      adsRequest.nonLinearAdSlotWidth = video.clientWidth;
+      adsRequest.nonLinearAdSlotHeight = Math.floor(video.clientHeight / 3);
+      adsRequest.setAdWillAutoPlay(true);
+      adsRequest.setAdWillPlayMuted(false);
+
+      adsLoader.requestAds(adsRequest);
+    }
+
+    function onAdsManagerLoaded(adsManagerLoadedEvent) {
+      const adsRenderingSettings = new google.ima.AdsRenderingSettings();
+      adsRenderingSettings.restoreCustomPlaybackStateOnAdBreakComplete = true;
+      adsRenderingSettings.enablePreloading = true;
+
+      adsManager = adsManagerLoadedEvent.getAdsManager(video, adsRenderingSettings);
+
+      // Ad lifecycle events
+      adsManager.addEventListener(google.ima.AdErrorEvent.Type.AD_ERROR, onAdError);
+      adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_PAUSE_REQUESTED, onContentPause);
+      adsManager.addEventListener(google.ima.AdEvent.Type.CONTENT_RESUME_REQUESTED, onContentResume);
+      adsManager.addEventListener(google.ima.AdEvent.Type.LOADED, () => updateStatus('Ad loaded', 'loading'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.STARTED, () => {
+        isAdPlaying = true;
+        updateStatus('Ad playing', 'ad');
+      });
+      adsManager.addEventListener(google.ima.AdEvent.Type.COMPLETE, () => updateStatus('Ad completed', 'ready'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.SKIPPED, () => updateStatus('Ad skipped', 'ready'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.CLICKED, () => updateStatus('Ad clicked', 'ad'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.PAUSED, () => updateStatus('Ad paused', 'ad'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.RESUMED, () => updateStatus('Ad playing', 'ad'));
+      adsManager.addEventListener(google.ima.AdEvent.Type.ALL_ADS_COMPLETED, () => {
+        isAdPlaying = false;
+        updateStatus('All ads completed', 'ready');
+      });
+
+      try {
+        adsManager.init(video.clientWidth, video.clientHeight, google.ima.ViewMode.NORMAL);
+        adsManager.start();
+      } catch (adError) {
+        onAdError(adError);
+      }
+    }
+
+    function onContentPause() {
+      isAdPlaying = true;
+      video.pause();
+    }
+
+    function onContentResume() {
+      isAdPlaying = false;
+      updateStatus('Content playing', 'playing');
+      video.setAttribute('controls', '');
+      
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          updateStatus('Tap video to play content', 'ready');
+        });
+      }
+      resetBtn.style.display = 'inline-flex';
+    }
+
+    function onAdError(adErrorEvent) {
+      const error = adErrorEvent.getError ? adErrorEvent.getError() : adErrorEvent;
+      console.error('Ad Error:', error);
+      updateStatus('Ad error - playing content', 'error');
+      
+      if (adsManager) {
+        try { adsManager.destroy(); } catch(e) {}
+      }
+      isAdPlaying = false;
+      onContentResume();
+    }
+
+    function onContentEnded() {
+      updateStatus('Content ended', 'ready');
+      if (adsLoader) adsLoader.contentComplete();
+      resetBtn.style.display = 'inline-flex';
+    }
+
+    function onResize() {
+      if (adsManager && video.clientWidth > 0) {
+        adsManager.resize(video.clientWidth, video.clientHeight, google.ima.ViewMode.NORMAL);
+      }
+    }
+
+    function copyVast() {
+      navigator.clipboard.writeText(VAST_TAG).then(() => {
+        const btn = $('copyBtn');
+        const original = btn.textContent;
+        btn.textContent = 'Copied!';
+        setTimeout(() => { btn.textContent = original; }, 1800);
+      });
+    }
+
+    // Initialize when IMA is ready
+    window.addEventListener('load', () => {
+      const checkIMA = () => {
+        if (window.google && google.ima) {
+          initIMA();
+        } else {
+          setTimeout(checkIMA, 100);
+        }
+      };
+      checkIMA();
+    });
+  </script>
 </body>
-</html>
+  </html>
