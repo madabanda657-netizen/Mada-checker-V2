@@ -1,631 +1,605 @@
 <!DOCTYPE html>
 <html>
 <head>
+<title>Admin Panel - Mada Game</title>
 <meta charset="UTF-8">
-<title>Mada Game Earn - PvP Checkers</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<!-- FIREBASE SDKs -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-check-compat.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/blueimp-md5/2.19.0/js/md5.min.js"></script>
-
-<!-- MEDIAN BRIDGE -->
-<script src="https://js.median.dev/median.js"></script>
-
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;background:#000;color:#fff;text-align:center;overflow-x:hidden}.container{padding:20px;max-width:600px;margin:0 auto;padding-bottom:80px}.card{background:#111;padding:20px;margin:15px 0;border-radius:15px;box-shadow:0 0 20px #00ffcc55;border:1px solid #00ffcc33}input,select,button{padding:12px;margin:8px 0;border-radius:10px;border:none;width:100%;font-size:16px}button{background:linear-gradient(45deg,#00ffcc,#00ccff);font-weight:bold;color:#000;cursor:pointer}h1{color:#00ffcc;margin-bottom:10px;font-size:28px}h3{color:#00ccff;margin-bottom:10px}.success{color:#51cf66}.error{color:#ff6b6b}.nav{position:fixed;bottom:0;left:0;right:0;background:#111;display:none;justify-content:space-around;padding:10px 0 12px;box-shadow:0 -2px 10px #00ffcc44;z-index:100}.nav-btn{background:transparent;border:1px solid transparent;color:#888;padding:6px 2px;margin:0;width:auto;font-size:10px;display:flex;flex-direction:column;align-items:center;gap:3px}.nav-btn .nav-icon{font-size:18px}.nav-btn.active{color:#00ffcc;border-color:transparent;text-shadow:0 0 10px #00ffcc}.page{display:none}.page.active{display:block}.flex-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:14px;color:#ccc}
-@keyframes coinDrop { 0% { transform: scale(1); } 50% { transform: scale(1.2); color: #ffd700; } 100% { transform: scale(1); } }
-.coin-update { animation: coinDrop 0.5s ease; }
-.phone-input-group{display:flex;gap:0;margin:8px 0}.phone-prefix{background:#1a1a1a;color:#00ffcc;padding:12px;border-radius:10px 0 0 10px;font-size:16px;font-weight:bold;white-space:nowrap;display:flex;align-items:center;border:1px solid #00ffcc33;border-right:none;min-width:60px;justify-content:center}.phone-input-group input{border-radius:0 10px 10px 0!important;margin:0!important}
-.payment-locked-box{background:linear-gradient(135deg,#0a1a1a,#0a1a2e);padding:18px;border-radius:12px;border:2px solid #00ffcc44;margin:10px 0}.payment-locked-row{display:flex;justify-content:space-between;align-items:center}.payment-locked-label{font-size:12px;color:#888}.payment-locked-phone{font-size:22px;font-weight:bold;color:#00ffcc}.payment-locked-flag{font-size:36px}.payment-locked-secure{margin-top:10px;font-size:11px;color:#51cf66;display:flex;align-items:center;justify-content:center;gap:5px}.payment-locked-divider{height:1px;background:#00ffcc33;margin:10px 0}.payment-locked-title{font-size:13px;color:#00ffcc;font-weight:bold;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.referral-card{background:linear-gradient(135deg,#1a1a2e,#0a2a1a);border:2px solid #ffd700}.referral-link-box{display:flex;gap:8px;margin-top:12px}.referral-link-box input{flex:1;background:#0a0a0a;color:#00ffcc;border:1px solid #ffd700;padding:10px;border-radius:8px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.copy-btn{width:auto!important;padding:10px 16px!important;background:linear-gradient(45deg,#ffd700,#ffaa00)!important;color:#000!important;font-weight:bold;border-radius:8px!important;cursor:pointer;border:none!important;margin:0!important}
-.grade-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:20px 0}.grade-card{background:linear-gradient(135deg,#1a1a2e,#16213e);padding:20px;border-radius:15px;cursor:pointer;border:2px solid #00ffcc33;transition:transform 0.2s}.grade-card:hover{transform:translateY(-3px);border-color:#00ffcc}.grade-icon{font-size:40px;margin-bottom:10px}.grade-entry{color:#ff6b6b;font-weight:bold;font-size:18px}.grade-prize{color:#51cf66;font-weight:bold;font-size:16px;margin-top:5px}.grade-fee{color:#888;font-size:11px;margin-top:8px}
-.pvp-board-container{margin:20px auto;max-width:360px}.pvp-info-bar{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#111;border-radius:10px;margin:10px 0;border:1px solid #00ffcc33}.pvp-player{font-weight:bold;font-size:14px}.pvp-turn{color:#ffd700;font-weight:bold;font-size:12px;animation:pulse 1.5s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-.checkers-board{display:grid;grid-template-columns:repeat(8,1fr);border:3px solid #00ffcc;border-radius:5px;overflow:hidden;aspect-ratio:1}.square{aspect-ratio:1;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}.square.dark{background:#1a1a1a}.square.light{background:#e0e0e0}.square.selected{outline:3px solid #ffd700;outline-offset:-3px;z-index:2}.square.valid-move::after{content:'';position:absolute;width:30%;height:30%;background:rgba(0,255,204,0.6);border-radius:50%}.piece{width:70%;height:70%;border-radius:50%;border:2px solid #888;display:flex;align-items:center;justify-content:center;font-size:20px;color:#ffd700;z-index:1}.piece.p1{background:radial-gradient(circle,#ff6b6b,#c92a2a)}.piece.p2{background:radial-gradient(circle,#444,#000)}.piece.king::after{content:'♔'}
-.draw-counter-bar{display:none;padding:8px 12px;background:#1a1a0a;border-radius:8px;margin:8px 0;border:1px solid #ffd70044;text-align:center;font-size:14px;color:#ffd700;font-weight:bold;animation:pulse 1.5s infinite}
-.searching-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:9999;display:none;align-items:center;justify-content:center;flex-direction:column}.search-spinner{width:60px;height:60px;border:6px solid #333;border-top:6px solid #00ffcc;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
-.chat-user-row{transition:background 0.2s;cursor:pointer}.chat-user-row:hover{background:#1a1a1a!important}.chat-avatar{position:relative;width:44px;height:44px;background:linear-gradient(135deg,#1a1a2e,#0a2a2a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:#00ffcc;flex-shrink:0;font-weight:bold}.chat-online-dot{position:absolute;bottom:2px;right:2px;width:12px;height:12px;border-radius:50%;background:#555;border:2px solid #111;transition:background 0.3s}.chat-online-dot.on{background:#51cf66;box-shadow:0 0 6px #51cf66}.chat-unread-badge{display:none;min-width:20px;height:20px;border-radius:10px;background:#ff6b6b;color:#fff;font-size:10px;font-weight:bold;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
-.chat-msg-container{display:flex;margin:4px 0;align-items:flex-end;gap:4px}.chat-msg-bubble{padding:8px 12px;border-radius:14px;max-width:75%;word-wrap:break-word;min-width:60px;box-shadow:0 1px 3px rgba(0,0,0,0.3)}.chat-msg-mine{background:linear-gradient(135deg,#0a3a2a,#0a2a3a);border-bottom-right-radius:4px}.chat-msg-other{background:linear-gradient(135deg,#1a1a2e,#16213e);border-bottom-left-radius:4px}
-.chat-reply-btn,.chat-delete-btn{font-size:12px;padding:4px 6px;background:transparent;border:none;cursor:pointer;border-radius:50%;opacity:0.35;flex-shrink:0;line-height:1;transition:opacity 0.2s}.chat-reply-btn:hover,.chat-delete-btn:hover{opacity:1}.chat-reply-btn{color:#555}.chat-delete-btn{color:#ff6b6b}
-.chat-date-sep{text-align:center;margin:14px 0;font-size:11px;color:#555}.chat-date-sep span{background:#1a1a1a;padding:3px 14px;border-radius:10px;display:inline-block}
-.chat-reply-preview-box{display:none;padding:8px 12px;background:#1a1a2e;border-radius:8px 8px 0 0;border-left:3px solid #00ffcc;margin-top:5px}.chat-input-bar{display:flex;gap:8px;margin-top:5px;align-items:flex-end}.chat-attach-btn,.chat-voice-btn,.chat-video-call-btn,.chat-clear-btn{cursor:pointer;padding:12px;background:#1a1a1a;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;width:auto;margin:0;font-size:20px;border:1px solid #00ffcc33}.chat-attach-btn input{display:none}
-.chat-msg-img{max-width:200px;max-height:200px;border-radius:8px;margin-bottom:5px;display:block;cursor:pointer}.chat-voice-player{width:180px;height:35px;margin-top:5px}.chat-tick-read{color:#00ffcc;font-size:11px}.chat-tick-unread{color:#666;font-size:11px}
-.chat-header-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #1a1a1a}.chat-conv-avatar{width:38px;height:38px;background:linear-gradient(135deg,#1a1a2e,#0a2a2a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:#00ffcc;font-weight:bold;flex-shrink:0}.chat-messages-box{height:calc(100vh - 250px);overflow-y:auto;padding:10px;background:#0a0a0a;border-radius:10px;border:1px solid #1a1a1a}.chat-back-btn{width:auto;padding:8px 14px;background:#1a1a1a;color:#00ffcc;border:1px solid #00ffcc44;border-radius:10px;cursor:pointer;font-size:14px;flex-shrink:0;margin:0}.chat-search-input{background:#1a1a1a!important;color:#fff!important;border:1px solid #00ffcc33!important;margin-bottom:10px!important}.chat-user-list{max-height:calc(100vh - 220px);overflow-y:auto;padding:0!important}
-.recording-indicator{color:#ff6b6b;font-size:12px;animation:blink 1s infinite}@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
-.history-list{margin-top:10px;text-align:left;border-top:1px solid #1a1a1a;padding-top:10px}.history-item{padding:8px 0;border-bottom:1px solid #1a1a1a;font-size:12px;display:flex;justify-content:space-between;align-items:center}.history-status-pending{color:#ffd700;font-weight:bold;font-size:11px}.history-status-approved{color:#51cf66;font-weight:bold;font-size:11px}.history-status-declined{color:#ff6b6b;font-weight:bold;font-size:11px}
-.legal-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:10000;align-items:center;justify-content:center;padding:20px}.legal-modal-content{background:#111;border:1px solid #00ffcc44;border-radius:15px;padding:20px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;text-align:left;color:#ccc;font-size:13px;line-height:1.6}.legal-modal-content h2{color:#00ffcc;margin-bottom:15px;text-align:center}
-.wa-float{position:fixed;bottom:80px;right:15px;width:55px;height:55px;background:#25d366;border-radius:50%;display:none;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(37,211,102,.4);z-index:99;text-decoration:none}.wa-float:hover{transform:scale(1.1)}.wa-float svg{width:28px;height:28px;fill:#fff}
-.video-call-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:10001;display:none;flex-direction:column;align-items:center;justify-content:center}.video-call-overlay video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;background:#000}.video-call-overlay .local-video{width:120px;height:160px;top:15px;left:15px;border-radius:10px;border:2px solid #00ffcc;z-index:2;object-fit:cover}.video-call-overlay .call-controls{position:absolute;bottom:40px;display:flex;gap:20px;z-index:3}.video-call-overlay .call-controls button{width:60px;height:60px;border-radius:50%;font-size:24px;display:flex;align-items:center;justify-content:center;padding:0}.end-call-btn{background:#ff6b6b!important;color:#fff!important}.call-info{position:absolute;top:20px;width:100%;text-align:center;z-index:2;color:#fff;text-shadow:0 2px 4px rgba(0,0,0,0.8)}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: #0a0a0a; color: #fff; }
+.container { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.header { background: #111; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+.card { background: #111; padding: 20px; margin: 15px 0; border-radius: 10px; border: 1px solid #00ffcc33; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 12px; text-align: left; border-bottom: 1px solid #333; font-size: 13px; }
+th { color: #00ffcc; font-size: 11px; text-transform: uppercase; }
+.btn { padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin: 2px; font-weight: bold; }
+.btn-approve { background: #51cf66; color: #000; }
+.btn-reject { background: #ff6b6b; color: #fff; }
+.btn-ban { background: #ff922b; color: #000; }
+.btn-unban { background: #00ccff; color: #000; }
+.btn-edit { background: #9b59b6; color: #fff; }
+.btn-p1 { background: #ff6b6b; color: #fff; }
+.btn-p2 { background: #444; color: #fff; border: 1px solid #888; }
+.btn-refund { background: #ffd700; color: #000; }
+.btn-view { background: #9b59b6; color: #fff; }
+.status { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+.status-pending { background: #ffd700; color: #000; }
+.status-approved, .status-paid, .status-finished { background: #51cf66; color: #000; }
+.status-rejected, .status-declined { background: #ff6b6b; color: #fff; }
+.status-playing { background: #00ccff; color: #000; }
+.status-draw { background: #888; color: #fff; }
+.login-box { max-width: 400px; margin: 100px auto; background: #111; padding: 30px; border-radius: 15px; }
+input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; background: #222; color: #fff; }
+.hidden { display: none; }
 
-.inbox-item { padding: 10px; border-radius: 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 5px; }
-.inbox-meta { font-size: 10px; color: #888; display: flex; justify-content: space-between; }
-.inbox-file { background: #1a1a2e; padding: 6px 12px; border-radius: 8px; color: #00ccff; font-size: 13px; text-decoration: none; display: inline-block; margin-top: 5px; border: 1px solid #00ccff33; }
-.inbox-img { max-width: 100%; max-height: 150px; border-radius: 8px; margin-top: 5px; cursor: pointer; }
-.notification-dot { width: 8px; height: 8px; background: #ff6b6b; border-radius: 50%; display: inline-block; vertical-align: middle; margin-left: 4px; }
+.tabs { display: flex; background: #111; border-radius: 10px; margin-bottom: 20px; border: 1px solid #00ffcc33; overflow: hidden; flex-wrap: wrap; }
+.tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; color: #888; font-weight: bold; background: #111; border: none; font-size: 13px; min-width: 120px; }
+.tab.active { color: #000; background: #00ffcc; }
 
-.profile-pic-container { position: relative; width: 120px; height: 120px; border-radius: 50%; overflow: hidden; cursor: pointer; border: 3px solid #00ffcc; box-shadow: 0 0 15px #00ffcc55; margin: 0 auto; background: #1a1a2e; }
-.profile-pic { width: 100%; height: 100%; object-fit: cover; }
-.profile-pic-upload-overlay { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.6); color: #fff; text-align: center; font-size: 24px; padding: 8px 0; transition: opacity 0.3s; opacity: 0; }
-.profile-pic-container:hover .profile-pic-upload-overlay { opacity: 1; }
+.user-layout { display: flex; gap: 20px; min-height: 500px; }
+.user-list { width: 300px; background: #0a0a0a; border-radius: 10px; overflow-y: auto; border: 1px solid #333; }
+.user-item { padding: 12px 15px; border-bottom: 1px solid #222; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+.user-item:hover, .user-item.active { background: #1a1a2e; }
+.user-item .u-name { font-weight: bold; color: #fff; font-size: 14px; }
+.user-item .u-coins { color: #ffd700; font-size: 12px; }
+.chat-area { flex: 1; background: #0a0a0a; border-radius: 10px; display: flex; flex-direction: column; border: 1px solid #333; }
+.chat-header { padding: 15px; border-bottom: 1px solid #333; font-weight: bold; color: #00ffcc; display: flex; justify-content: space-between; align-items: center; }
+.chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #000; border-radius: 0 0 10px 10px; }
+.msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 14px; word-wrap: break-word; }
+.msg-admin { background: #003d33; align-self: flex-end; border: 1px solid #00ffcc55; }
+.msg-user { background: #1a1a1a; align-self: flex-start; border: 1px solid #333; }
+.chat-input-area { padding: 15px; border-top: 1px solid #333; display: flex; gap: 10px; align-items: center; }
+.chat-input-area input[type="text"] { flex: 1; margin: 0; }
+.chat-input-area button { background: #00ffcc; color: #000; border: none; padding: 12px 24px; border-radius: 8px; font-weight: bold; cursor: pointer; width: auto; }
+.chat-attach-btn { background: #222; color: #00ffcc; padding: 12px; border-radius: 8px; cursor: pointer; font-size: 18px; border: 1px solid #00ffcc33; width: auto; margin: 0; display: flex; align-items: center; justify-content: center; }
+.chat-attach-btn input { display: none; }
+.empty-state { color: #555; text-align: center; margin-top: 40px; }
+.btn-small { border: none; padding: 5px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-top: 5px; margin-left: 4px; }
 
-#splashScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 100000; display: flex; align-items: center; justify-content: center; flex-direction: column; transition: opacity 0.6s ease-out; }
-#splashScreen.splash-hide { opacity: 0; pointer-events: none; }
-#splashScreen img { max-width: 200px; border-radius: 25px; box-shadow: 0 0 40px rgba(0,255,204,0.3); animation: splashPulse 2s infinite alternate; }
-#splashScreen p { margin-top: 20px; font-size: 14px; color: #00ffcc; letter-spacing: 2px; font-weight: bold; animation: blink 1.5s infinite; }
-@keyframes splashPulse { 0% { transform: scale(1); box-shadow: 0 0 30px rgba(0,255,204,0.2); } 100% { transform: scale(1.03); box-shadow: 0 0 50px rgba(0,255,204,0.5); } }
+.online-dot { width:9px; height:9px; background:#51cf66; border-radius:50%; display:inline-block; margin-right:6px; box-shadow:0 0 5px #51cf66; animation:pulse 2s infinite; }
+.offline-dot { width:9px; height:9px; background:#444; border-radius:50%; display:inline-block; margin-right:6px; }
+.banned-text { color: #ff6b6b; text-decoration: line-through; }
+@keyframes pulse {0%{box-shadow:0 0 0 0 #51cf6699}70%{box-shadow:0 0 0 6px #51cf6600}100%{box-shadow:0 0 0 0 #51cf6600}}
+
+/* ===== LIVE BOARD MODAL ===== */
+.modal-overlay { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.9); z-index: 9999; align-items: center; justify-content: center; padding: 20px; }
+.modal-content { background: #111; padding: 20px; border-radius: 15px; border: 1px solid #00ffcc44; max-width: 500px; width: 100%; text-align: center; }
+.modal-board { display: grid; grid-template-columns: repeat(8, 1fr); border: 3px solid #00ffcc; border-radius: 5px; overflow: hidden; aspect-ratio: 1; max-width: 360px; margin: 15px auto; }
+.modal-sq { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+.modal-sq.dark { background: #1a1a1a; }
+.modal-sq.light { background: #e0e0e0; }
+.modal-piece { width: 70%; height: 70%; border-radius: 50%; border: 2px solid #888; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #ffd700; }
+.modal-piece.p1 { background: radial-gradient(circle, #ff6b6b, #c92a2a); }
+.modal-piece.p2 { background: radial-gradient(circle, #444, #000); }
+.modal-piece.king::after { content: '♔'; }
+
+@media (max-width: 768px) {
+  .user-layout { flex-direction: column; }
+  .user-list { width: 100%; max-height: 250px; }
+  th, td { padding: 8px; font-size: 10px; }
+  .tab { padding: 10px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
 
-<div id="splashScreen">
-  <img src="https://z-cdn-media.chatglm.cn/files/d54d922b-4b7b-4617-ba44-dd7d7ed90ece.jpg?auth_key=1880396714-870c17548bf243a4aaf338c89067f40e-0-f5c6aad1af4806c39becbafe397514a4" alt="Mada Earn">
-  <p>MADA EARN</p>
+<div id="loginScreen" class="login-box">
+  <h2 style="color:#00ffcc;text-align:center;margin-bottom:20px;">🔐 Admin Login</h2>
+  <input type="password" id="passwordInput" placeholder="Enter admin password" onkeypress="if(event.key==='Enter')login()">
+  <button onclick="login()" style="width:100%;padding:12px;background:linear-gradient(45deg,#00ffcc,#00ccff);border:none;border-radius:8px;color:#000;font-weight:bold;cursor:pointer;">Login</button>
+  <p id="loginError" style="color:#ff6b6b;margin-top:10px;text-align:center;"></p>
 </div>
 
-<div id="termsModal" class="legal-modal"><div class="legal-modal-content"><h2>📜 Terms of Service</h2><p><b>1. Eligibility:</b> You must be at least 18 years old.</p><p><b>2. Real Money Gaming:</b> Play at your own risk.</p><p><b>3. Deposits:</b> Use registered username as reference.</p><p><b>4. Withdrawals:</b> Processed within 3 hours.</p><p><b>5. Fair Play:</b> Cheating = permanent ban.</p><p><b>6. Platform Fee:</b> 20% fee on winnings.</p><p><b>7. Referrals:</b> MWK 10 per 5 referrals.</p><br><button onclick="document.getElementById('termsModal').style.display='none'" style="width:auto;padding:10px 30px;margin:0 auto;display:block">Close</button></div></div>
-<div id="privacyModal" class="legal-modal"><div class="legal-modal-content"><h2>🔒 Privacy Policy</h2><p><b>1. Data Collection:</b> Username, phone, email.</p><p><b>2. Data Usage:</b> Operate app & process transactions.</p><p><b>3. Security:</b> Firebase encrypted.</p><p><b>4. Chat & Calls:</b> P2P video. Voice stored in DB.</p><br><button onclick="document.getElementById('privacyModal').style.display='none'" style="width:auto;padding:10px 30px;margin:0 auto;display:block">Close</button></div></div>
+<div id="adminPanel" class="hidden">
+  <div class="container">
+    <div class="header">
+      <div><span style="background:#00ffcc;color:#000;padding:5px 10px;border-radius:5px;font-weight:bold;">AG</span> <strong>ADMIN PANEL</strong></div>
+      <button onclick="logout()" style="background:#ff6b6b;color:#fff;border:none;padding:8px 15px;border-radius:6px;cursor:pointer;">Logout</button>
+    </div>
 
-<div id="searchingOverlay" class="searching-overlay"><div class="search-spinner"></div><h2 style="color:#00ffcc">Finding Opponent...</h2><p id="searchGradeText" style="color:#ccc;margin-top:10px"></p><button onclick="cancelMatchmaking()" style="margin-top:30px;width:auto;padding:12px 30px;background:#ff6b6b;color:#fff">Cancel</button></div>
-<a href="https://chat.whatsapp.com/CmvdLsifPKS51OyRnrITFz" target="_blank" id="waFloatBtn" class="wa-float" title="Join WhatsApp Group"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></a>
+    <div class="card" style="display:flex; justify-content:space-around; text-align:center; padding:15px; margin-bottom:20px; flex-wrap: wrap; gap: 10px;">
+      <div><div style="font-size:11px;color:#888;">USERS</div><div id="totalUsers" style="font-size:22px;color:#00ffcc;font-weight:bold;">0</div></div>
+      <div><div style="font-size:11px;color:#888;">ONLINE</div><div id="onlineUsers" style="font-size:22px;color:#51cf66;font-weight:bold;">0</div></div>
+      <div><div style="font-size:11px;color:#888;">PENDING DEPOSITS</div><div id="pendingDeposits" style="font-size:22px;color:#ffd700;font-weight:bold;">0</div></div>
+      <div><div style="font-size:11px;color:#888;">PENDING WITHDRAWALS</div><div id="pendingCount" style="font-size:22px;color:#ffd700;font-weight:bold;">0</div></div>
+      <div><div style="font-size:11px;color:#888;">ACTIVE MATCHES</div><div id="activeMatches" style="font-size:22px;color:#00ccff;font-weight:bold;">0</div></div>
+    </div>
 
-<div id="videoCallOverlay" class="video-call-overlay"><div class="call-info"><div id="callStatusText" style="font-size:18px;font-weight:bold">Calling...</div><div id="callTimer" style="font-size:14px;margin-top:5px">00:00</div></div><video id="remoteVideo" autoplay playsinline></video><video id="localVideo" class="local-video" autoplay playsinline muted></video><div class="call-controls"><button onclick="toggleMuteCall()" id="muteCallBtn" style="background:#333;color:#fff">🎤</button><button onclick="endVideoCall()" class="end-call-btn">📞</button></div></div>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('deposits')">💰 Deposits</button>
+      <button class="tab" onclick="switchTab('withdrawals')">💸 Withdrawals</button>
+      <button class="tab" onclick="switchTab('pvp')">♟️ PvP Matches</button>
+      <button class="tab" onclick="switchTab('chat')">💬 Users & Chat</button>
+    </div>
 
-<div class="container">
-<div id="loginPage" class="page active"><img src="https://i.imgur.com/VGTXXkQ.jpeg" style="width:120px;height:auto;border-radius:15px;margin-bottom:10px;box-shadow:0 0 20px #00ffcc55"><h1>Mada Game Earn</h1><div class="card"><h3>👤 Create Account</h3><input type="text" id="usernameInput" placeholder="Username (min 3 chars)" maxlength="20"><select id="networkRegInput"><option value="">📱 Select Network</option><option value="Airtel Money">🟴 Airtel Money</option><option value="TNM Mpamba">🟣 TNM Mpamba</option></select><div class="phone-input-group" id="regPhoneGroup"><span class="phone-prefix">🇲🇼 +265</span><input type="tel" id="phoneInput" placeholder="0882XXXXXX" maxlength="10" pattern="[0-9]*" inputmode="numeric"></div><input type="email" id="emailInput" placeholder="📧 Email"><input type="password" id="passwordInput" placeholder="Password (min 6 chars)"><div style="text-align:left;margin:10px 0;font-size:13px"><label><input type="checkbox" id="agreeCheck" style="width:auto;margin-right:8px">I am 18+ & agree to <a href="#" onclick="document.getElementById('termsModal').style.display='flex';return false" style="color:#00ffcc">Terms</a></label></div><div style="background:#222;padding:10px;border-radius:8px;margin:10px 0"><span id="captchaQ" style="color:#ffd700"></span> = <input type="number" id="captchaA" placeholder="?" style="width:80px;display:inline-block;margin:0"></div><button id="loginBtn" type="button">Create Account & Play</button><p id="loginMsg" style="margin-top:10px;"></p><p style="margin-top:15px;font-size:12px;color:#888">Have account? <a href="#" onclick="showLogin();return false" style="color:#00ffcc">Login</a></p></div></div>
+    <!-- DEPOSITS TAB -->
+    <div id="depositsTab" class="card">
+      <h3>Deposit Requests</h3>
+      <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>USER</th><th>MWK</th><th>TX ID</th><th>DATE</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+        <tbody id="depositBody"></tbody>
+      </table>
+      </div>
+    </div>
 
-<div id="profilePage" class="page">
-  <h1>👤 My Profile</h1>
-  <div class="card" style="display:flex;flex-direction:column;align-items:center;gap:15px;">
-     <div class="profile-pic-container" onclick="document.getElementById('profilePicInput').click()">
-         <img id="profilePicImg" src="https://via.placeholder.com/100/111/00ffcc?text=U" class="profile-pic">
-         <div class="profile-pic-upload-overlay">📷</div>
-     </div>
-     <input type="file" id="profilePicInput" accept="image/*" onchange="handleProfilePicUpload(event)" style="display:none;">
-     <h2 id="profileDisplayName" style="color:#00ffcc;margin:0;">Loading...</h2>
+    <!-- WITHDRAWALS TAB -->
+    <div id="withdrawalsTab" class="card hidden">
+      <h3>Withdrawal Queue</h3>
+      <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>USER</th><th>MWK</th><th>PHONE</th><th>NETWORK</th><th>DATE</th><th>STATUS</th><th>ACTIONS</th></tr></thead>
+        <tbody id="withdrawalBody"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- PVP MATCHES TAB -->
+    <div id="pvpTab" class="card hidden">
+      <h3>♟️ PvP Match History & Control</h3>
+      <p style="font-size:12px;color:#888;margin-bottom:15px">View live boards, force winners, or refund stuck matches.</p>
+      <div style="overflow-x:auto;">
+      <table>
+        <thead><tr><th>ID</th><th>P1 (🔴)</th><th>P2 (⚫)</th><th>STAKE</th><th>STATUS</th><th>WINNER</th><th>ACTIONS</th></tr></thead>
+        <tbody id="pvpBody"></tbody>
+      </table>
+      </div>
+    </div>
+
+    <!-- CHAT TAB -->
+    <div id="chatTab" class="hidden">
+      <div class="user-layout">
+        <div class="user-list" id="usersListPanel">
+          <div style="padding:15px;color:#888;text-align:center">Loading users...</div>
+        </div>
+        <div class="chat-area">
+          <div class="chat-header" id="chatHeader"><span>Select a user to chat</span></div>
+          <div class="chat-messages" id="chatMessages"><div class="empty-state">Select a user from the left to view and send messages</div></div>
+          <div class="chat-input-area">
+            <label class="chat-attach-btn">📎<input type="file" id="adminFileInput" accept="image/*" onchange="handleAdminFileUpload(event)"></label>
+            <input type="text" id="adminMsgInput" placeholder="Type message..." disabled>
+            <button onclick="sendAdminMsg()" id="adminSendBtn" disabled>Send</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div class="card" style="text-align:left;">
-     <h3 style="text-align:center;margin-bottom:15px;">📋 Details</h3>
-     <div class="flex-row"><span>📱 Phone</span><span id="profilePhone" style="color:#fff">-</span></div>
-     <div class="flex-row"><span>📡 Network</span><span id="profileNetwork" style="color:#fff">-</span></div>
-     <div class="flex-row"><span>📧 Email</span><span id="profileEmail" style="color:#fff">-</span></div>
-     <div class="flex-row"><span>🆔 Username</span><span id="profileUsername" style="color:#fff">-</span></div>
-  </div>
-  <div style="text-align:right;margin-top:10px"><button onclick="logout()" style="width:auto;padding:10px 20px;background:#333;color:#ff6b6b;border:1px solid #ff6b6b44">🚪 Logout</button></div>
 </div>
 
-<div id="walletPage" class="page"><h1>💳 Wallet</h1><div class="card"><h3>💰 Balance</h3><p id="balanceText" style="font-size:28px;color:#ffd700;margin:10px 0;font-weight:bold;">💵 MWK 0</p></div><div class="card"><h3>📊 Game Stats</h3><div class="flex-row"><span>♟️ Played</span><span id="statPlayed" style="color:#fff;font-weight:bold">0</span></div><div class="flex-row"><span>🏆 Won</span><span id="statWon" style="color:#51cf66;font-weight:bold">0</span></div><div class="flex-row"><span>😞 Lost</span><span id="statLost" style="color:#ff6b6b;font-weight:bold">0</span></div></div><div class="card referral-card"><h3>🤝 Invite & Earn</h3><p style="font-size:13px;color:#ccc;margin-bottom:10px">Earn <b style="color:#ffd700">MWK 10</b> per 5 friends!</p><div style="font-size:14px;color:#fff;margin-bottom:10px">Referred: <span id="refCount" style="color:#51cf66;font-weight:bold">0</span></div><div class="referral-link-box"><input type="text" id="refLinkInput" readonly><button class="copy-btn" onclick="copyRefLink()">Copy</button></div><button id="claimRefBtn" onclick="claimReferralBonus()" style="display:none;margin-top:10px;background:linear-gradient(45deg,#ffd700,#ffaa00)">🎉 Claim MWK 10</button></div><div class="card"><h3>📱 Withdrawal Method</h3><div id="paymentLockedBox" class="payment-locked-box" style="display:none"><div class="payment-locked-title">💳 Registered Phone (Locked)</div><div class="payment-locked-row"><div style="text-align:left"><div class="payment-locked-label" id="payNetworkLabel">Network</div><div class="payment-locked-phone" id="payPhoneLabel">---</div></div><div class="payment-locked-flag">🇲🇼</div></div><div class="payment-locked-divider"></div><div class="payment-locked-secure">🔒 Withdrawals sent here automatically</div></div><div id="paymentNoPhone" style="display:none;padding:15px;background:#1a1a0a;border-radius:10px;border:1px solid #ffaa00"><p style="color:#ffaa00">⚠ No payment phone on file</p></div></div><div class="card"><h3>💰 Deposit</h3><div style="background:#1a1a0a;padding:15px;border-radius:10px;border:1px solid #ffd700;margin-bottom:15px;text-align:center"><p style="color:#ffd700;font-weight:bold;margin-bottom:8px">📲 Send Money To:</p><p style="color:#fff;font-size:16px;font-weight:bold">Joff chikwayiti</p><p style="color:#00ffcc;font-size:22px;font-weight:bold;letter-spacing:1px">0882 968 384</p><p style="color:#888;font-size:11px;margin-top:8px">⚠ Use exact Username as reference!</p></div><input type="number" id="depositAmountInput" placeholder="Amount MWK (min 50)" min="50" inputmode="numeric"><input type="text" id="depositTxIdInput" placeholder="Transaction ID from SMS" maxlength="20"><button onclick="submitDepositRequest()">Submit Deposit</button><p id="depositMsg" style="margin-top:10px;"></p><div id="myDepositHistory" class="history-list"></div></div><div class="card"><h3>💸 Withdraw</h3><select id="withdrawAmount"><option value="100">100 MWK</option><option value="200">200 MWK</option><option value="500">500 MWK</option></select><button onclick="submitWithdrawRequest()">Request Withdrawal</button><p id="msg" style="margin-top:10px;"></p></div><div class="card"><h3>📜 Withdrawal History</h3><div id="myWithdrawHistory" class="history-list" style="border-top:none; padding-top:0; margin-top:0;"></div></div><div class="card" style="border-color:#ff6b6b44"><h3>⚠️ Rules</h3><div style="text-align:left;color:#ccc;line-height:1.8;font-size:12px">1. Process time up to <b style="color:#fff">3 hours</b>.<br>2. Min withdrawal 100 MWK.<br>3. Withdrawals sent to your registered phone number.<br>4. Fake activity = Permanent ban.<br>5. After deposit enter in admin inbox to send screenshot of your deposit immediately.</div></div><div style="margin-top:20px;padding:20px;background:#111;border-radius:15px;border:1px solid #222"><div style="font-size:28px;margin-bottom:10px">🔞</div><p style="color:#ff6b6b;font-weight:bold;font-size:16px">18+ Only</p><div style="display:flex;justify-content:center;gap:15px;font-size:13px;margin:15px 0"><a href="#" onclick="document.getElementById('termsModal').style.display='flex';return false" style="color:#00ccff">Terms</a><a href="#" onclick="document.getElementById('privacyModal').style.display='flex';return false" style="color:#00ccff">Privacy</a></div><a href="https://chat.whatsapp.com/CmvdLsifPKS51OyRnrITFz" target="_blank" style="display:block;background:#25d366;color:#fff;padding:12px;border-radius:10px;text-decoration:none;font-weight:bold;font-size:14px">💬 Join WhatsApp Group</a></div></div>
-
-<div id="playPage" class="page"><h1>♟️ PvP Checkers</h1><p style="color:#ccc;margin-bottom:20px">Choose stake and play for real money!</p><div class="grade-grid" id="gradeGrid"></div><div class="card" style="margin-top:30px"><h3>📜 Game Rules (Malawi)</h3><div style="text-align:left;color:#ccc;line-height:1.8;font-size:13px">1. Fee deducted immediately.<br>2. Matched with real player.<br>3. Winner takes 80%.<br>4. 20% platform fee.<br>5. Disconnect = lose.<br>6. Capture backward is allowed.<br>7. Multiple jumps are forced.<br>8. If you can capture, you must capture.<br>9. Only Kings can fly (long jumps).<br><br><b style="color:#ffd700">⚖️ Draw Rules:</b><br>10. <b style="color:#00ffcc">King vs King</b> = Immediate draw (both refunded).<br>11. <b style="color:#00ffcc">One piece left</b> = Opponent gets <b style="color:#ffd700">12 moves</b> to catch it. If not caught in 12 moves = draw (both refunded).</div></div></div>
-
-<div id="inboxPage" class="page">
-  <h1>📥 Admin Inbox</h1>
-  <div id="inboxMessages" class="card" style="height: 350px; overflow-y: auto; margin-bottom: 15px; text-align: left; background: #0a0a0a;">
-     <div style="text-align:center;color:#555;padding:20px;">Loading...</div>
+<!-- ===== LIVE BOARD MODAL ===== -->
+<div id="boardModal" class="modal-overlay">
+  <div class="modal-content">
+    <h3 style="color:#00ffcc; margin-bottom:5px;">♟️ Live Match View</h3>
+    <div id="modalGameInfo" style="font-size:12px; color:#ccc; margin-bottom:10px;"></div>
+    <div id="modalBoardContainer" class="modal-board"></div>
+    <div id="modalDrawInfo" style="font-size:13px; color:#ffd700; margin-top:10px; font-weight:bold;"></div>
+    <br>
+    <button onclick="closeBoardModal()" style="background:#333; color:#fff; padding:10px 30px; border:1px solid #00ffcc44; border-radius:8px; cursor:pointer;">Close</button>
   </div>
-  <div class="card">
-     <h3>Send Message to Admin</h3>
-     <div class="chat-input-bar" style="margin-bottom:10px;">
-        <label class="chat-attach-btn" style="font-size:16px;">📎<input type="file" id="inboxFileInput" accept="image/*,.pdf,.doc,.docx,.txt,.zip" onchange="handleInboxFileUpload(event)"></label>
-        <input type="text" id="inboxMsgInput" placeholder="Type your message..." style="flex:1; margin:0;" onkeypress="if(event.key==='Enter'){event.preventDefault();sendInboxMsg();}">
-        <button onclick="sendInboxMsg()" style="width:auto; padding:12px 18px; flex-shrink:0; margin:0;">Send</button>
-     </div>
-     <div id="inboxFilePreview" style="display:none; font-size:12px; color:#00ffcc; margin-top:10px;">Attached: <span id="inboxFileName"></span> <button onclick="clearInboxFile()" style="width:auto; padding:2px 8px; background:transparent; color:#ff6b6b; border:none; margin:0; font-size:14px;">✕</button></div>
-  </div>
-</div>
-
-<div id="gamePage" class="page" style="display:none"><button onclick="exitGame()" style="width:auto;padding:10px 20px;background:#333;color:#ff6b6b;margin-bottom:10px">✕ Exit</button><div class="pvp-board-container"><div class="pvp-info-bar"><div class="pvp-player" style="color:#ff6b6b" id="p1Name">P1</div><div class="pvp-turn" id="turnIndicator">Starting...</div><div class="pvp-player" style="color:#ccc" id="p2Name">P2</div></div><div class="checkers-board" id="checkersBoard"></div><div id="drawCounterBar" class="draw-counter-bar">⏱️ Draw in <span id="drawMovesLeft">12</span> moves</div><div class="pvp-info-bar" style="margin-top:10px;background:#0a0a0a"><div style="font-size:12px;color:#888">Stake: <span id="gameStake" style="color:#ffd700">0</span></div><div style="font-size:12px;color:#888">Prize: <span id="gamePrize" style="color:#51cf66">0</span></div></div></div></div>
-
-<div id="chatPage" class="page"><h1>💬 Chat</h1><input type="text" id="chatSearchInput" class="chat-search-input" placeholder="🔍 Search users..." oninput="filterChatUsers()"><div id="chatUserList" class="card chat-user-list"></div></div>
-
-<div id="chatConvPage" class="page"><div class="chat-header-bar"><button class="chat-back-btn" onclick="backToChatList()">← </button><div class="chat-conv-avatar" id="chatConvAvatar">?</div><div style="flex:1;text-align:left"><div id="chatConvName" style="font-weight:bold;font-size:15px;color:#fff"></div><div id="chatConvStatus" style="font-size:11px;color:#888"></div></div><button class="chat-clear-btn" onclick="clearChat()">🗑️</button><button class="chat-video-call-btn" onclick="startVideoCall()">📹</button></div><div id="chatMessages" class="chat-messages-box"></div><div id="replyPreview" class="chat-reply-preview-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><div style="flex:1;min-width:0"><div style="font-size:10px;color:#00ffcc;margin-bottom:2px" id="replyPreviewLabel">Replying to</div><div id="replyPreviewText" style="font-size:12px;color:#ccc;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div></div><button onclick="cancelReply()" style="width:auto;padding:4px 10px;background:transparent;color:#ff6b6b;font-size:16px;margin:0;cursor:pointer;border:none">✕</button></div></div><div id="recordingStatus" style="display:none;padding:5px;background:#1a0000;border-radius:8px 8px 0 0"><span class="recording-indicator">🔴 Recording Voice Note... Tap 🎤 to stop</span></div><div class="chat-input-bar"><label class="chat-attach-btn">📎<input type="file" id="chatFileInput" accept="image/*" onchange="handleChatFileUpload(event)"></label><button class="chat-voice-btn" id="voiceNoteBtn" onclick="toggleVoiceNote()">🎤</button><input type="text" id="chatMsgInput" placeholder="Type a message..." style="flex:1" onkeypress="if(event.key==='Enter'){event.preventDefault();sendChatMsg();}"><button onclick="sendChatMsg()" style="width:auto;padding:12px 18px;flex-shrink:0;margin:0">Send</button></div></div>
-</div>
-
-<div class="nav" id="mainNav">
-  <button class="nav-btn" id="navProfile"><span class="nav-icon">👤</span>Profile</button>
-  <button class="nav-btn active" id="navWallet"><span class="nav-icon">💳</span>Wallet</button>
-  <button class="nav-btn" id="navChat"><span class="nav-icon">💬</span>Chat</button>
-  <button class="nav-btn" id="navPlay"><span class="nav-icon">♟️</span>Play</button>
-  <button class="nav-btn" id="navInbox"><span class="nav-icon">📥</span>Inbox <span id="inboxNotifDot" class="notification-dot" style="display:none;"></span></button>
 </div>
 
 <script>
-/* ===== CORE APP ===== */
-var db = null;
-try { if (typeof firebase!== 'undefined' && firebase.apps && firebase.apps.length === 0) { firebase.initializeApp({apiKey:"AIzaSyBRDfT-P8wzVAAZs8lveF1-ZTf8QlpRC5g",authDomain:"apple-green-ded09.firebaseapp.com",databaseURL:"https://apple-green-ded09-default-rtdb.firebaseio.com",projectId:"apple-green-ded09",storageBucket:"apple-green-ded09.firebasestorage.app",messagingSenderId:"1093712798003",appId:"1:1093712798003:web:2a945cd7fc76641dab5e46"}); db = firebase.database(); } } catch(e) { db = null; }
-var DAILY_LIMIT = 12000; var currentGame = null; var gameState = {}; var captchaAnswer = 0;
-const PVP_GRADES = [ { id: 1, name: 'Grade 1', entryMWK: 50, winMWK: 80, icon: '🥉' }, { id: 2, name: 'Grade 2', entryMWK: 200, winMWK: 320, icon: '🥈' }, { id: 3, name: 'Grade 3', entryMWK: 500, winMWK: 800, icon: '🥇' }, { id: 4, name: 'Grade 4', entryMWK: 1000, winMWK: 1600, icon: '💎' } ];
-var myUid = null; var myPlayerNumber = 0; var currentGameId = null; var gameListener = null;
-var processedGameEnds = {};
+const ADMIN_PASSWORD = "mada2026"; 
+const ADMIN_NAME = "Admin_Mada";
+let currentChatUser = null;
+let cachedUsers = {};
 
-function escapeHtml(text) { if(!text) return ''; var d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
-function generateCaptcha(){ var a = Math.floor(Math.random()*10)+1; var b = Math.floor(Math.random()*10)+1; captchaAnswer = a+b; var el = document.getElementById('captchaQ'); if(el) el.innerText = a + ' + ' + b; }
-function formatMalawiPhone(input) { var digits = input.replace(/[^0-9]/g, ''); if (digits.length === 10 && /^0[89]/.test(digits)) return digits; if (digits.length === 9 && /^[89]/.test(digits)) return '0' + digits; return digits; }
-function isValidMalawiPhone(phone) { return /^0[89][0-9]{8}$/.test(phone); }
-function lockPaymentMethod(phone, network) { var lockedBox = document.getElementById('paymentLockedBox'); var noPhone = document.getElementById('paymentNoPhone'); var payPhoneLabel = document.getElementById('payPhoneLabel'); var payNetworkLabel = document.getElementById('payNetworkLabel'); if (phone && network) { if (lockedBox) lockedBox.style.display = 'block'; if (noPhone) noPhone.style.display = 'none'; if (payPhoneLabel) payPhoneLabel.innerText = phone; if (payNetworkLabel) payNetworkLabel.innerText = network; } else { if (lockedBox) lockedBox.style.display = 'none'; if (noPhone) noPhone.style.display = 'block'; } }
-
-function loadProfile() {
-    if (!db || !myUid) return;
-    db.ref('users/' + myUid).once('value', function(snap) {
-        var data = snap.val() || {};
-        document.getElementById('profilePhone').innerText = data.phone || 'N/A';
-        document.getElementById('profileNetwork').innerText = data.network || 'N/A';
-        document.getElementById('profileEmail').innerText = data.email || 'N/A';
-        document.getElementById('profileUsername').innerText = myUid;
-    });
-    db.ref('leaderboard_all/' + myUid).once('value', function(snap) {
-        var data = snap.val() || {};
-        document.getElementById('profileDisplayName').innerText = data.displayName || myUid;
-        var imgEl = document.getElementById('profilePicImg');
-        if (data.profilePic) imgEl.src = data.profilePic;
-        else imgEl.src = 'https://via.placeholder.com/100/111/00ffcc?text=' + (data.displayName || myUid)[0].toUpperCase();
-    });
-    db.ref('leaderboard_all/' + myUid + '/profilePic').on('value', function(snap) {
-        var pic = snap.val();
-        if (pic) document.getElementById('profilePicImg').src = pic;
-    });
-}
-
-function handleProfilePicUpload(e) {
-    var file = e.target.files && e.target.files[0];
-    if (!file || !db || !myUid) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-        var img = new Image();
-        img.onload = function() {
-            var c = document.createElement('canvas');
-            var w=300, h=300, iw=img.width, ih=img.height;
-            if(iw>w){ih*=w/iw;iw=w;} if(ih>h){iw*=h/ih;ih=h;}
-            c.width=Math.round(iw); c.height=Math.round(ih);
-            c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-            var base64Pic = c.toDataURL('image/jpeg', 0.6);
-            db.ref('leaderboard_all/' + myUid + '/profilePic').set(base64Pic, function(err) {
-                if(err) alert('Upload failed: ' + err.message);
-            });
-        };
-        img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
-}
-
-function register() { try { var user = (document.getElementById("usernameInput").value || "").trim(); var networkReg = document.getElementById("networkRegInput").value; var phoneDigits = (document.getElementById("phoneInput").value || "").trim(); var email = (document.getElementById("emailInput").value || "").trim(); var pass = document.getElementById("passwordInput").value || ""; var agree = document.getElementById("agreeCheck").checked; var captcha = parseInt(document.getElementById("captchaA").value); var msgEl = document.getElementById("loginMsg"); if(user.length < 3){ msgEl.innerHTML = '<span class="error">Username min 3 chars</span>'; return; } if(!networkReg){ msgEl.innerHTML = '<span class="error">Select network</span>'; return; } var fullPhone = formatMalawiPhone(phoneDigits); if(!isValidMalawiPhone(fullPhone)){ msgEl.innerHTML = '<span class="error">Invalid Malawi number</span>'; return; } if(!email){ msgEl.innerHTML = '<span class="error">Enter email</span>'; return; } if(pass.length < 6){ msgEl.innerHTML = '<span class="error">Password min 6</span>'; return; } if(!agree){ msgEl.innerHTML = '<span class="error">Must agree</span>'; return; } if(captcha !== captchaAnswer){ msgEl.innerHTML = '<span class="error">Wrong captcha</span>'; generateCaptcha(); return; } msgEl.innerHTML = '<span class="success">Creating...</span>'; var name = user.replace(/\s+/g, '_').replace(/[.#$\[\]]/g, ''); var refCode = new URLSearchParams(window.location.search).get('ref'); if (refCode) { try { localStorage.setItem('refCode', refCode); } catch(e){} } var savedRefCode = localStorage.getItem('refCode') || null; try { localStorage.setItem("user", name); localStorage.setItem("userPhone", fullPhone); localStorage.setItem("network", networkReg); } catch(e){} myUid = name; document.getElementById("loginPage").classList.remove("active"); document.getElementById("mainNav").style.display = "flex"; showPage('wallet'); setTimeout(function(){ if (!db) return; db.ref('users/' + name).set({phone: fullPhone, network: networkReg, email: email, created: Date.now(), password: md5(pass)}); db.ref('leaderboard_all/' + name).once('value').then(function(snap){ if(!snap.exists()) { db.ref('leaderboard_all/' + name).set({coins:0,score:0,gamesPlayed:0,gamesWon:0,gamesLost:0,referralClaimed:0,banned:false,lastPlayed:Date.now(),displayName:user,phone:fullPhone,network:networkReg}); if (savedRefCode && savedRefCode !== name) { db.ref('referrals/' + savedRefCode + '/' + name).set(true); } } }); lockPaymentMethod(fullPhone, networkReg); setupInboxNotif(); }, 200); } catch(e){ alert("Error: " + e.message); } }
-function showLogin(){ document.getElementById("phoneInput").style.display = "none"; document.getElementById('regPhoneGroup').style.display = 'none'; document.getElementById("networkRegInput").style.display = "none"; document.getElementById("emailInput").style.display = "none"; document.getElementById("passwordInput").placeholder = "Password"; document.getElementById("loginBtn").innerText = "Login"; document.getElementById("loginBtn").onclick = login; document.querySelector('#loginPage h3').innerText = '👤 Login'; }
-function login() { try { var rawName = (document.getElementById("usernameInput").value || "").trim(); var pass = document.getElementById("passwordInput").value; var msgEl = document.getElementById("loginMsg"); var captcha = parseInt(document.getElementById("captchaA").value); if(captcha !== captchaAnswer){ msgEl.innerHTML = '<span class="error">Wrong captcha</span>'; generateCaptcha(); return; } if (!rawName || !pass) { msgEl.innerHTML = '<span class="error">Enter username & password</span>'; return; } var name = rawName.replace(/\s+/g, '_').replace(/[.#$\[\]]/g, ''); msgEl.innerHTML = '<span class="success">Checking...</span>'; if(!db){ msgEl.innerHTML = '<span class="error">Database error</span>'; return; } db.ref('users/' + name).once('value', function(snap){ var data = snap.val(); if(!data){ msgEl.innerHTML = '<span class="error">User not found</span>'; return; } if(data.password !== md5(pass)){ msgEl.innerHTML = '<span class="error">Wrong password</span>'; return; } localStorage.setItem("user", name); myUid = name; document.getElementById("loginPage").classList.remove("active"); document.getElementById("mainNav").style.display = "flex"; showPage('wallet'); lockPaymentMethod(data.phone || '', data.network || ''); setupInboxNotif(); }); } catch(e){ alert(e.message); } }
-function logout(){ if(confirm('Logout?')){ localStorage.removeItem('user'); myUid=null; location.reload(); } }
-function showPage(page) { try { var pages = document.querySelectorAll('.page'); for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active'); var btns = document.querySelectorAll('.nav-btn'); for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active'); document.getElementById('mainNav').style.display = 'flex'; document.getElementById('waFloatBtn').style.display = 'flex'; if (page === 'profile') { document.getElementById('profilePage').classList.add('active'); if(btns[0]) btns[0].classList.add('active'); loadProfile(); } else if (page === 'wallet') { document.getElementById('walletPage').classList.add('active'); if(btns[1]) btns[1].classList.add('active'); showBalance(); listenMyDeposits(); listenMyWithdrawals(); loadReferralData(); } else if (page === 'chat') { document.getElementById('chatPage').classList.add('active'); if(btns[2]) btns[2].classList.add('active'); } else if (page === 'play') { document.getElementById('playPage').classList.add('active'); if(btns[3]) btns[3].classList.add('active'); renderGrades(); } else if (page === 'inbox') { document.getElementById('inboxPage').classList.add('active'); if(btns[4]) btns[4].classList.add('active'); loadInbox(); document.getElementById('inboxNotifDot').style.display = 'none'; } else if (page === 'game') { document.getElementById('gamePage').classList.add('active'); document.getElementById('mainNav').style.display = 'none'; document.getElementById('waFloatBtn').style.display = 'none'; } } catch(e) {} }
-function showBalance() { try { if (!db) return; db.ref('leaderboard_all/' + myUid).once('value', function(snap) { var d = snap.val() || {}; var balance = d.coins || 0; document.getElementById("balanceText").innerHTML = "💵 MWK " + balance.toLocaleString(); document.getElementById("statPlayed").innerText = parseInt(d.gamesPlayed) || 0; document.getElementById("statWon").innerText = parseInt(d.gamesWon) || 0; document.getElementById("statLost").innerText = parseInt(d.gamesLost) || 0; }); } catch(e) {} }
-function loadReferralData() { if (!db || !myUid) return; var baseUrl = window.location.href.split('?')[0]; document.getElementById('refLinkInput').value = baseUrl + '?ref=' + myUid; db.ref('referrals/' + myUid).once('value', function(snap) { var count = snap.numChildren(); document.getElementById('refCount').innerText = count; db.ref('leaderboard_all/' + myUid + '/referralClaimed').once('value', function(cSnap) { var claimed = cSnap.val() || 0; var unclaimed = Math.floor(count / 5) - claimed; var claimBtn = document.getElementById('claimRefBtn'); if (unclaimed > 0) { claimBtn.style.display = 'block'; claimBtn.innerText = '🎉 Claim MWK ' + (unclaimed * 10); } else { claimBtn.style.display = 'none'; } }); }); }
-function copyRefLink() { var copyText = document.getElementById("refLinkInput"); if (navigator.clipboard) navigator.clipboard.writeText(copyText.value); else { copyText.select(); document.execCommand("copy"); } alert("Copied!"); }
-function claimReferralBonus() { if (!db || !myUid) return; db.ref('referrals/' + myUid).once('value', function(snap) { var count = snap.numChildren(); db.ref('leaderboard_all/' + myUid).once('value', function(uSnap) { var userData = uSnap.val() || {}; var claimed = userData.referralClaimed || 0; var unclaimed = Math.floor(count / 5) - claimed; if (unclaimed > 0) { db.ref('leaderboard_all/' + myUid).update({ coins: (userData.coins || 0) + (unclaimed * 10), referralClaimed: claimed + unclaimed }, function(err) { if (!err) { alert('🎉 Claimed MWK ' + (unclaimed * 10) + '!'); showBalance(); loadReferralData(); } }); } }); }); }
-function renderGrades() { var grid = document.getElementById('gradeGrid'); var html = ''; PVP_GRADES.forEach(g => { html += `<div class="grade-card" onclick="joinPvP(${g.id})"><div class="grade-icon">${g.icon}</div><h3 style="color:#fff;font-size:16px">${g.name}</h3><div class="grade-entry">Pay: MWK ${g.entryMWK}</div><div class="grade-prize">Win: MWK ${g.winMWK}</div></div>`; }); grid.innerHTML = html; showBalance(); }
-function joinPvP(gradeId) { if (!db || !myUid) { alert('Login first'); return; } var grade = PVP_GRADES.find(g => g.id === gradeId); if (!grade) return; db.ref('leaderboard_all/' + myUid + '/coins').once('value', function(snap) { var balance = snap.val() || 0; if (balance < grade.entryMWK) { alert('Not enough balance! Need MWK ' + grade.entryMWK); return; } db.ref('leaderboard_all/' + myUid).update({ coins: balance - grade.entryMWK }); document.getElementById('searchGradeText').innerText = grade.name + ' - MWK ' + grade.entryMWK; document.getElementById('searchingOverlay').style.display = 'flex'; db.ref('pvp_queue/' + gradeId + '/' + myUid).set({ timestamp: Date.now() }); }); }
-
-if (db) { db.ref('pvp_queue').on('value', function(snap) { if (!myUid) return; snap.forEach(function(gradeSnap) { var gradeId = gradeSnap.key; var players = []; gradeSnap.forEach(function(pSnap) { players.push(pSnap.key); }); if (players.length >= 2 && (players[0] === myUid || players[1] === myUid)) { var p1 = players[0]; var p2 = players[1]; db.ref('pvp_queue/' + gradeId + '/' + p1).remove(); db.ref('pvp_queue/' + gradeId + '/' + p2).remove(); var gameId = db.ref('pvp_games').push().key; var initBoard = []; for (var r = 0; r < 8; r++) { for (var c = 0; c < 8; c++) { initBoard.push((r + c) % 2 && r < 3 ? -1 : (r + c) % 2 && r > 4 ? 1 : 0); } } var gradeData = PVP_GRADES.find(g => g.id === parseInt(gradeId)); db.ref('pvp_games/' + gameId).set({ p1: p1, p2: p2, gradeId: gradeId, winMWK: gradeData.winMWK, entryMWK: gradeData.entryMWK, board: initBoard, turn: 1, status: 'playing', winner: null, created: Date.now(), drawCounter: 0, drawTargetPlayer: 0 }); } }); }); }
-
-if (db) { db.ref('pvp_games').orderByChild('p1').equalTo(myUid || 'null').on('value', handleGameUpdate); db.ref('pvp_games').orderByChild('p2').equalTo(myUid || 'null').on('value', handleGameUpdate); }
-function handleGameUpdate(snap) { if (!myUid) return; snap.forEach(function(child) { var game = child.val(); if (game && (game.p1 === myUid || game.p2 === myUid) && game.status === 'playing') { if (currentGameId !== child.key) { currentGameId = child.key; myPlayerNumber = game.p1 === myUid ? 1 : 2; document.getElementById('searchingOverlay').style.display = 'none'; showPage('game'); startGameListener(child.key); } } else if (game && game.status === 'finished' && currentGameId === child.key) { endPvPGame(game); } }); }
-function startGameListener(gameId) { if (gameListener) db.ref('pvp_games/' + gameListener).off(); gameListener = gameId; db.ref('pvp_games/' + gameId).on('value', function(snap) { var game = snap.val(); if (!game) return; gameState = game; renderPvPBoard(); }); }
-
-function renderPvPBoard() { var boardEl = document.getElementById('checkersBoard'); var html = ''; document.getElementById('p1Name').innerText = '🔴 ' + (gameState.p1 === myUid ? 'You' : gameState.p1); document.getElementById('p2Name').innerText = '⚫ ' + (gameState.p2 === myUid ? 'You' : gameState.p2); document.getElementById('gameStake').innerText = gameState.entryMWK + ' MWK'; document.getElementById('gamePrize').innerText = gameState.winMWK + ' MWK'; var isMyTurn = gameState.turn === myPlayerNumber; document.getElementById('turnIndicator').innerText = isMyTurn ? '🎯 Your Turn!' : '⏳ Opponent'; document.getElementById('turnIndicator').style.color = isMyTurn ? '#51cf66' : '#ff6b6b';
-
-var drawBar = document.getElementById('drawCounterBar');
-var drawTarget = gameState.drawTargetPlayer || 0;
-var drawCount = gameState.drawCounter || 0;
-if (drawTarget > 0 && drawCount > 0) {
-    drawBar.style.display = 'block';
-    var movesLeft = 12 - drawCount;
-    var lonePlayerName = drawTarget === 1 ? (gameState.p1 === myUid ? 'You' : gameState.p1) : (gameState.p2 === myUid ? 'You' : gameState.p2);
-    drawBar.innerText = '⏱️ ' + lonePlayerName + ' has 1 piece! Draw in ' + movesLeft + ' moves';
-} else {
-    drawBar.style.display = 'none';
-}
-
-var board = gameState.board.slice(); if (myPlayerNumber === 2) board.reverse(); var selected = gameState.selected || null; var validMoves = gameState.validMoves || []; for (var i = 0; i < 64; i++) { var r = Math.floor(i / 8); var c = i % 8; var isDark = (r + c) % 2 === 1; var p = board[i]; var selClass = selected && selected[0] === r && selected[1] === c ? 'selected' : ''; var moveClass = validMoves.some(m => m[0] === r && m[1] === c) ? 'valid-move' : ''; html += `<div class="square ${isDark?'dark':'light'} ${selClass} ${moveClass}" onclick="clickPvPSquare(${r},${c})">`; if (p !== 0) { html += `<div class="piece ${p > 0 ? 'p1' : 'p2'} ${Math.abs(p) === 2 ? 'king' : ''}"></div>`; } html += '</div>'; } boardEl.innerHTML = html; }
-
-function clickPvPSquare(r, c) { if (gameState.turn !== myPlayerNumber) return; if (!db || !currentGameId) return; if (myPlayerNumber === 2) { r = 7 - r; c = 7 - c; } var board = gameState.board; var clickedVal = board[r * 8 + c]; var selected = gameState.selected; var validMoves = gameState.validMoves || []; if (selected && validMoves.some(m => m[0] === r && m[1] === c)) { makePvPMove(selected[0], selected[1], r, c); return; } if ((myPlayerNumber === 1 && clickedVal > 0) || (myPlayerNumber === 2 && clickedVal < 0)) { db.ref('pvp_games/' + currentGameId).update({ selected: [r, c], validMoves: getPvPMoves(r, c, board, myPlayerNumber) }); } else { db.ref('pvp_games/' + currentGameId).update({ selected: null, validMoves: [] }); } }
-
-function canAnyPieceCapture(board, pl) {
-    for (var i = 0; i < 64; i++) {
-        var p = board[i];
-        if ((pl === 1 && p > 0) || (pl === 2 && p < 0)) {
-            var r = Math.floor(i / 8), c = i % 8;
-            var caps = getCapturesOnly(r, c, board, pl);
-            if (caps.length > 0) return true;
-        }
-    }
-    return false;
-}
-
-function getCapturesOnly(r, c, board, pl) {
-    var p = board[r * 8 + c];
-    var captures = [];
-    var isKing = Math.abs(p) === 2;
-    var captureDirs = [-1, 1];
-
-    if (isKing) {
-        for (var d of captureDirs) {
-            for (var dc of [-1, 1]) {
-                var nr = r + d, nc = c + dc;
-                var foundOpponent = false;
-                while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                    if (board[nr * 8 + nc] !== 0) {
-                        if (!foundOpponent && board[nr * 8 + nc] * p < 0) {
-                            foundOpponent = true;
-                        } else {
-                            break;
-                        }
-                    } else if (foundOpponent) {
-                        captures.push([nr, nc]);
-                    }
-                    nr += d; nc += dc;
-                }
-            }
-        }
-    } else {
-        for (var d of captureDirs) {
-            for (var dc of [-1, 1]) {
-                var jr = r + d*2, jc = c + dc*2, nr = r + d, nc = c + dc;
-                if (jr >= 0 && jr < 8 && jc >= 0 && jc < 8 && board[nr * 8 + nc] * p < 0 && board[jr * 8 + jc] === 0) {
-                    captures.push([jr, jc]);
-                }
-            }
-        }
-    }
-    return captures;
-}
-
-function getPvPMoves(r, c, board, pl) {
-    var p = board[r * 8 + c];
-    var moves = [];
-    var captures = [];
-    var isKing = Math.abs(p) === 2;
-    
-    captures = getCapturesOnly(r, c, board, pl);
-    
-    if (canAnyPieceCapture(board, pl)) {
-        return captures;
-    }
-
-    var moveDirs = isKing ? [-1, 1] : (pl === 1 ? [-1] : [1]);
-    
-    if (isKing) {
-        for (var d of moveDirs) {
-            for (var dc of [-1, 1]) {
-                var nr = r + d, nc = c + dc;
-                while (nr >= 0 && nr < 8 && nc >= 0 && nc < 8) {
-                    if (board[nr * 8 + nc] === 0) {
-                        moves.push([nr, nc]);
-                    } else {
-                        break;
-                    }
-                    nr += d; nc += dc;
-                }
-            }
-        }
-    } else {
-        for (var d of moveDirs) {
-            for (var dc of [-1, 1]) {
-                var nr = r + d, nc = c + dc;
-                if (nr >= 0 && nr < 8 && nc >= 0 && nc < 8 && board[nr * 8 + nc] === 0) {
-                    moves.push([nr, nc]);
-                }
-            }
-        }
-    }
-
-    return moves;
-}
-
-function makePvPMove(fromR, fromC, toR, toC) {
-    var board = gameState.board.slice();
-    var p = board[fromR * 8 + fromC];
-    var pl = (p > 0) ? 1 : 2;
-    
-    board[toR * 8 + toC] = p;
-    board[fromR * 8 + fromC] = 0;
-
-    var captured = false;
-
-    if (Math.abs(toR - fromR) > 1) {
-        captured = true;
-        var dR = Math.sign(toR - fromR);
-        var dC = Math.sign(toC - fromC);
-        var ir = fromR + dR, ic = fromC + dC;
-        while (ir !== toR || ic !== toC) {
-            if (board[ir * 8 + ic] !== 0) {
-                board[ir * 8 + ic] = 0;
-            }
-            ir += dR; ic += dC;
-        }
-    }
-
-    if (toR === 0 && p === 1) board[toR * 8 + toC] = 2;
-    if (toR === 7 && p === -1) board[toR * 8 + toC] = -2;
-
-    var updates = { board: board, selected: null, validMoves: [] };
-
-    if (captured) {
-        var nextCaptures = getCapturesOnly(toR, toC, board, pl);
-        if (nextCaptures.length > 0) {
-            updates.turn = pl;
-            updates.selected = [toR, toC];
-            updates.validMoves = nextCaptures;
-            db.ref('pvp_games/' + currentGameId).update(updates);
-            return;
-        }
-    }
-
-    var nextPl = pl === 1 ? 2 : 1;
-    updates.turn = nextPl;
-    
-    var p1Count = 0, p2Count = 0;
-    var p1Kings = 0, p2Kings = 0;
-    for (var i = 0; i < 64; i++) {
-        if (board[i] > 0) { p1Count++; if (board[i] === 2) p1Kings++; }
-        if (board[i] < 0) { p2Count++; if (board[i] === -2) p2Kings++; }
-    }
-    
-    if (p1Count === 0) { updates.status = 'finished'; updates.winner = gameState.p2; }
-    else if (p2Count === 0) { updates.status = 'finished'; updates.winner = gameState.p1; }
-    else {
-        var nextHasMoves = false;
-        for (var i = 0; i < 64; i++) {
-            var np = board[i];
-            if ((nextPl === 1 && np > 0) || (nextPl === 2 && np < 0)) {
-                var r = Math.floor(i / 8), c = i % 8;
-                var m = getPvPMoves(r, c, board, nextPl);
-                if (m.length > 0) { nextHasMoves = true; break; }
-            }
-        }
-        if (!nextHasMoves) {
-            updates.status = 'finished';
-            updates.winner = pl;
-        }
-    }
-
-    if (updates.status !== 'finished') {
-        if (p1Count === 1 && p1Kings === 1 && p2Count === 1 && p2Kings === 1) {
-            updates.status = 'finished';
-            updates.winner = 'draw';
-        }
-        
-        if (updates.status !== 'finished') {
-            var lonePlayer = 0;
-            if (p1Count === 1 && p2Count >= 1) lonePlayer = 1;
-            if (p2Count === 1 && p1Count >= 1) lonePlayer = 2;
-            if (p1Count === 1 && p2Count === 1) lonePlayer = 1;
-            
-            var currentDrawTarget = gameState.drawTargetPlayer || 0;
-            var currentDrawCounter = gameState.drawCounter || 0;
-            
-            if (lonePlayer > 0) {
-                if (currentDrawTarget === 0) {
-                    updates.drawTargetPlayer = lonePlayer;
-                    updates.drawCounter = 1;
-                } else if (currentDrawTarget === lonePlayer) {
-                    updates.drawCounter = currentDrawCounter + 1;
-                    updates.drawTargetPlayer = lonePlayer;
-                    if (updates.drawCounter >= 12) {
-                        updates.status = 'finished';
-                        updates.winner = 'draw';
-                    }
-                } else {
-                    updates.drawTargetPlayer = lonePlayer;
-                    updates.drawCounter = 1;
-                }
-            } else {
-                updates.drawTargetPlayer = 0;
-                updates.drawCounter = 0;
-            }
-        }
-    }
-
-    db.ref('pvp_games/' + currentGameId).update(updates);
-}
-
-function endPvPGame(game) {
-    if (!currentGameId) return;
-    if (processedGameEnds[currentGameId]) {
-        currentGameId = null;
-        showPage('wallet');
-        return;
-    }
-    processedGameEnds[currentGameId] = true;
-    db.ref('pvp_games/' + currentGameId).off();
-    
-    var isDraw = game.winner === 'draw';
-    var isWinner = !isDraw && game.winner === myUid;
-    var gameId = currentGameId;
-    
-    db.ref('leaderboard_all/' + myUid).once('value', function(snap) {
-        var data = snap.val() || {};
-        var updates = {};
-        
-        if (isDraw) {
-            var refundAmount = game.entryMWK;
-            updates.coins = (data.coins || 0) + refundAmount;
-            updates.gamesPlayed = (parseInt(data.gamesPlayed) || 0) + 1;
-            db.ref('leaderboard_all/' + myUid).update(updates, function(err) {
-                alert('🤝 DRAW! MWK ' + refundAmount + ' refunded to both players.');
-                currentGameId = null;
-                showPage('wallet');
-            });
-        } else {
-            updates.gamesPlayed = (parseInt(data.gamesPlayed) || 0) + 1;
-            updates.gamesWon = (parseInt(data.gamesWon) || 0) + (isWinner ? 1 : 0);
-            updates.gamesLost = (parseInt(data.gamesLost) || 0) + (isWinner ? 0 : 1);
-            if (isWinner) updates.coins = (data.coins || 0) + game.winMWK;
-            db.ref('leaderboard_all/' + myUid).update(updates, function(err) {
-                alert(isWinner ? '🎉 YOU WIN! +MWK ' + game.winMWK + '\n(80% of MWK ' + (game.entryMWK * 2) + ' pot)' : '😞 You Lost! MWK ' + game.entryMWK + ' entry fee lost.');
-                currentGameId = null;
-                showPage('wallet');
-            });
-        }
-    });
-}
-
-function cancelMatchmaking() { if (db && myUid) { db.ref('pvp_queue').once('value', function(snap) { snap.forEach(function(gradeSnap) { if (gradeSnap.val() && gradeSnap.val()[myUid]) { var gradeId = gradeSnap.key; var grade = PVP_GRADES.find(g => g.id === parseInt(gradeId)); db.ref('pvp_queue/' + gradeId + '/' + myUid).remove(); db.ref('leaderboard_all/' + myUid + '/coins').once('value', function(cSnap) { db.ref('leaderboard_all/' + myUid).update({ coins: (cSnap.val() || 0) + grade.entryMWK }); }); } }); }); } document.getElementById('searchingOverlay').style.display = 'none'; }
-function exitGame() { if (confirm('Leave & FORFEIT?')) { if (db && currentGameId) db.ref('pvp_games/' + currentGameId).update({ status: 'finished', winner: myPlayerNumber === 1 ? gameState.p2 : gameState.p1 }); } }
-function submitDepositRequest() { if (!db || !myUid) return; var amountMWK = parseInt(document.getElementById("depositAmountInput").value); var txId = (document.getElementById("depositTxIdInput").value || "").trim(); var msgEl = document.getElementById("depositMsg"); if (!amountMWK || amountMWK < 50 || !txId || txId.length < 4) { msgEl.innerHTML = '<span class="error">Min 50 MWK & valid Tx ID</span>'; return; } db.ref('deposit_requests').push({ uid: myUid, amountMWK: amountMWK, status: 'pending', timestamp: Date.now() }, function(err) { msgEl.innerHTML = err ? '<span class="error">Failed: '+err.message+'</span>' : '<span class="success">Request sent!</span>'; if(!err) { document.getElementById("depositAmountInput").value = ''; document.getElementById("depositTxIdInput").value = ''; } }); }
-function submitWithdrawRequest() { if (!db || !myUid) return; var amountMWK = parseInt(document.getElementById("withdrawAmount").value); var msgEl = document.getElementById("msg"); msgEl.innerHTML = '<span class="success">Processing...</span>'; db.ref('leaderboard_all/' + myUid + '/coins').once('value', function(snap) { var currentBalance = snap.val() || 0; if (currentBalance < amountMWK) { msgEl.innerHTML = '<span class="error">Not enough balance!</span>'; return; } db.ref('leaderboard_all/' + myUid).update({ coins: currentBalance - amountMWK }, function(err) { if(err) { msgEl.innerHTML = '<span class="error">Error</span>'; return; } db.ref('withdraw_requests').push({ uid: myUid, amountMWK: amountMWK, status: 'pending', timestamp: Date.now() }, function(err2) { msgEl.innerHTML = err2 ? '<span class="error">Failed</span>' : '<span class="success">Requested! Process within 3hrs.</span>'; if(!err2) showBalance(); }); }); }); }
-function listenMyDeposits() { if (!db || !myUid) return; db.ref('deposit_requests').orderByChild('uid').equalTo(myUid).on('value', function(snap) { var html = '<h3 style="font-size:14px;color:#888;margin-bottom:8px">Deposit History</h3>'; snap.forEach(function(child) { var r = child.val(); html += `<div class="history-item"><div><span style="color:#fff">MWK ${r.amountMWK}</span><br><span style="color:#555;font-size:10px">${new Date(r.timestamp).toLocaleDateString()} • ${r.txId||''}</span></div><span class="history-status-${r.status}">${r.status}</span></div>`; }); document.getElementById('myDepositHistory').innerHTML = html; }); }
-function listenMyWithdrawals() { if (!db || !myUid) return; db.ref('withdraw_requests').orderByChild('uid').equalTo(myUid).on('value', function(snap) { var html = ''; if(!snap.exists()) html = '<div style="text-align:center;color:#555;font-size:12px;padding:10px;">No withdrawals yet</div>'; snap.forEach(function(child) { var r = child.val(); var statusHtml = ''; if(r.status === 'pending') statusHtml = '<span class="history-status-pending">⏳ Pending</span>'; else if(r.status === 'approved') statusHtml = '<span class="history-status-approved">✅ Approved</span>'; else if(r.status === 'declined') statusHtml = '<span class="history-status-declined">❌ Declined</span>'; else statusHtml = `<span class="history-status-${r.status}">${r.status}</span>`; html += `<div class="history-item"><div><span style="color:#fff">MWK ${r.amountMWK}</span><br><span style="color:#555;font-size:10px">${new Date(r.timestamp).toLocaleDateString()}</span></div>${statusHtml}</div>`; }); document.getElementById('myWithdrawHistory').innerHTML = html; }); }
-
-var inboxFileData = null;
-var inboxFileName = null;
-
-function loadInbox() {
-    if (!db || !myUid) return;
-    db.ref('admin_inbox/' + myUid + '/messages').orderByChild('timestamp').on('value', function(snap) {
-        var html = '';
-        snap.forEach(function(child) {
-            var m = child.val();
-            var isMine = m.from === 'user';
-            var align = isMine ? 'text-align:right;' : 'text-align:left;';
-            var bg = isMine ? 'background:#0a2a3a;' : 'background:#1a1a2e;';
-            var contentHtml = '';
-            if (m.image) contentHtml += `<img src="${m.image}" class="inbox-img" onclick="window.open(this.src)">`;
-            if (m.fileData) contentHtml += `<a href="${m.fileData}" download="${escapeHtml(m.fileName) || 'file'}" class="inbox-file">📎 ${escapeHtml(m.fileName) || 'Download File'}</a>`;
-            if (m.text) contentHtml += `<div style="color:#fff; font-size:14px; white-space:pre-wrap;">${escapeHtml(m.text)}</div>`;
-            html += `<div class="inbox-item" style="${align} ${bg}">${contentHtml}<div class="inbox-meta"><span>${isMine ? 'You' : 'Admin'}</span><span>${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div></div>`;
-        });
-        document.getElementById('inboxMessages').innerHTML = html || '<div style="text-align:center;color:#555;padding:20px;">No messages yet</div>';
-        var el = document.getElementById('inboxMessages'); el.scrollTop = el.scrollHeight;
-    });
-}
-
-window.handleInboxFileUpload = function(e) {
-    var file = e.target.files && e.target.files[0]; if (!file) return;
-    var isImage = file.type.startsWith('image/'); var reader = new FileReader();
-    reader.onload = function(ev) {
-        if (isImage) { var img = new Image(); img.onload = function() { var c = document.createElement('canvas'); var w=600, h=600, iw=img.width, ih=img.height; if(iw>w){ih*=w/iw;iw=w;} if(ih>h){iw*=h/ih;ih=h;} c.width=Math.round(iw); c.height=Math.round(ih); c.getContext('2d').drawImage(img,0,0,c.width,c.height); inboxFileData = c.toDataURL('image/jpeg', 0.5); inboxFileName = file.name; document.getElementById('inboxFilePreview').style.display = 'block'; document.getElementById('inboxFileName').innerText = '📷 ' + file.name; }; img.src = ev.target.result; }
-        else { if (file.size > 1024 * 1024) { alert("File size must be less than 1MB."); e.target.value = ''; return; } inboxFileData = ev.target.result; inboxFileName = file.name; document.getElementById('inboxFilePreview').style.display = 'block'; document.getElementById('inboxFileName').innerText = '📎 ' + file.name; }
-    }; reader.readAsDataURL(file);
+const firebaseConfig = {
+  apiKey: "AIzaSyBRDfT-P8wzVAAZs8lveF1-ZTf8QlpRC5g",
+  authDomain: "apple-green-ded09.firebaseapp.com",
+  databaseURL: "https://apple-green-ded09-default-rtdb.firebaseio.com",
+  projectId: "apple-green-ded09",
+  storageBucket: "apple-green-ded09.firebasestorage.app",
+  messagingSenderId: "1093712798003",
+  appId: "1:1093712798003:web:2a945cd7fc76641dab5e46"
 };
-window.clearInboxFile = function() { inboxFileData = null; inboxFileName = null; document.getElementById('inboxFilePreview').style.display = 'none'; document.getElementById('inboxFileInput').value = ''; };
-window.sendInboxMsg = function() { if (!db || !myUid) return; var input = document.getElementById('inboxMsgInput'); var text = (input.value || '').trim(); if (!text && !inboxFileData) return; var msgData = { from: 'user', text: text, timestamp: Date.now() }; if (inboxFileData) { if (inboxFileData.includes('image/')) { msgData.image = inboxFileData; } else { msgData.fileData = inboxFileData; msgData.fileName = inboxFileName; } } db.ref('admin_inbox/' + myUid + '/messages').push(msgData, function(err) { if (!err) { input.value = ''; window.clearInboxFile(); } else { alert('Failed to send: ' + err.message); } }); };
 
-function setupInboxNotif() { if(!db || !myUid) return; db.ref('admin_inbox/' + myUid + '/messages').orderByChild('timestamp').limitToLast(1).on('value', function(snap) { snap.forEach(c => { var m = c.val(); if(m.from === 'admin') { var inboxPage = document.getElementById('inboxPage'); if(inboxPage && !inboxPage.classList.contains('active')) { var dot = document.getElementById('inboxNotifDot'); if(dot) dot.style.display = 'inline-block'; } } }); }); }
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-document.addEventListener('DOMContentLoaded', function() { 
-  setTimeout(function() { var splash = document.getElementById('splashScreen'); if (splash) { splash.classList.add('splash-hide'); setTimeout(function() { splash.style.display = 'none'; }, 700); } }, 2500);
-  var loginBtn=document.getElementById("loginBtn"); if(loginBtn) loginBtn.addEventListener('click', function(e){ e.preventDefault(); register(); }); var usernameInput=document.getElementById("usernameInput"); if(usernameInput){ usernameInput.addEventListener('keypress', function(e){ if(e.key==='Enter'){ e.preventDefault(); register(); }}); setTimeout(function(){ usernameInput.focus(); generateCaptcha(); },300); } var phoneInput=document.getElementById("phoneInput"); if(phoneInput) phoneInput.addEventListener('input', function(e){ this.value=this.value.replace(/[^0-9]/g,''); }); var el; el=document.getElementById("navProfile"); if(el) el.onclick=function(){ showPage('profile'); }; el=document.getElementById("navWallet"); if(el) el.onclick=function(){ showPage('wallet'); }; el=document.getElementById("navPlay"); if(el) el.onclick=function(){ showPage('play'); }; el=document.getElementById("navInbox"); if(el) el.onclick=function(){ showPage('inbox'); }; el=document.getElementById("navChat"); if(el) el.onclick=function(){ showPage('chat'); }; try { var u = localStorage.getItem("user"); if(u) { myUid = u; document.getElementById("loginPage").classList.remove("active"); document.getElementById("mainNav").style.display="flex"; document.getElementById('waFloatBtn').style.display='flex'; showPage('wallet'); if(db) lockPaymentMethod(localStorage.getItem("userPhone")||'', localStorage.getItem("network")||''); setupInboxNotif(); } } catch(e) {} 
-});
-</script>
-
-<script>
-(function(){
-  var chatCurrentWith = null; var chatListenerRef = null; var replyToMsg = null; var chatUsersCache = []; var chatMessagesData = []; var chatOnlineListeners = [];
-  var mediaRecorder = null; var audioChunks = []; var isRecording = false; var recordingTimer = null; var recordingSeconds = 0;
-  var peerConnection = null; var localStream = null; var callTimerInterval = null; var callSeconds = 0; var callListenerRef = null;
-  const iceServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
-
-  function setOnlineStatus(online) { if (!db || !myUid) return; var ref = db.ref('online_status/' + myUid); if (online) { ref.set({online: true, lastSeen: Date.now()}); ref.onDisconnect().set({online: false, lastSeen: Date.now()}); } else { ref.set({online: false, lastSeen: Date.now()}); } }
-  function getChatId(uid1, uid2) { return uid1 < uid2 ? uid1 + '_' + uid2 : uid2 + '_' + uid1; }
-  function escapeHtml(text) { var d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
-  
-  function showChatPage() { var pages = document.querySelectorAll('.page'); for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active'); document.getElementById('chatPage').classList.add('active'); var btns = document.querySelectorAll('.nav-btn'); for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active'); if(btns[2]) btns[2].classList.add('active'); document.getElementById('mainNav').style.display = 'flex'; document.getElementById('waFloatBtn').style.display = 'flex'; loadChatUsers(); }
-  
-  function loadChatUsers() { if (!db || !myUid) return; db.ref('leaderboard_all').once('value', function(snap) { chatUsersCache = []; snap.forEach(function(child) { if (child.key !== myUid) chatUsersCache.push({ uid: child.key, displayName: (child.val()||{}).displayName || child.key }); }); renderChatUsers(chatUsersCache); listenAllOnlineStatus(); loadAllLastMessages(); loadAllUnreadCounts(); }); }
-  function listenAllOnlineStatus() { chatOnlineListeners.forEach(r => r.off()); chatOnlineListeners = []; chatUsersCache.forEach(function(u) { var ref = db.ref('online_status/' + u.uid); ref.on('value', function(sSnap) { var dotEl = document.getElementById('cdot_' + u.uid); var sd = sSnap.val(); if (dotEl) { if (sd && sd.online) dotEl.classList.add('on'); else dotEl.classList.remove('on'); } }); chatOnlineListeners.push(ref); }); }
-  function loadAllLastMessages() { chatUsersCache.forEach(function(u) { var chatId = getChatId(myUid, u.uid); db.ref('chats/' + chatId + '/messages').orderByChild('timestamp').limitToLast(1).once('value', function(snap) { snap.forEach(function(child) { var msg = child.val(); var el = document.getElementById('lastmsg_' + u.uid); if (el) el.innerText = (msg.from === myUid ? 'You: ' : '') + (msg.image ? '📷' : (msg.audio ? '🎤' : (msg.text || ''))); }); }); }); }
-  function loadAllUnreadCounts() { chatUsersCache.forEach(function(u) { var chatId = getChatId(myUid, u.uid); db.ref('chats/' + chatId + '/messages').orderByChild('read').equalTo(false).once('value', function(snap) { var count = 0; snap.forEach(c => { if(c.val().from !== myUid) count++; }); var badge = document.getElementById('unread_' + u.uid); if (badge) { if (count > 0) { badge.style.display = 'flex'; badge.innerText = count; } else badge.style.display = 'none'; } }); }); }
-  
-  function renderChatUsers(users) { var el = document.getElementById('chatUserList'); if (!el) return; if (!users.length) { el.innerHTML = '<div style="padding:30px;color:#555">No users yet</div>'; return; } var html = ''; users.forEach(function(u) { html += `<div class="chat-user-row" onclick="window._openChatWith('${u.uid}','${u.displayName}')" style="display:flex;align-items:center;gap:12px;padding:12px 8px;border-bottom:1px solid #1a1a1a"><div class="chat-avatar">${escapeHtml(u.displayName[0])}<span id="cdot_${u.uid}" class="chat-online-dot"></span></div><div style="flex:1;text-align:left;min-width:0"><div style="font-weight:bold;color:#fff;font-size:14px">${escapeHtml(u.displayName)}</div><div id="lastmsg_${u.uid}" style="font-size:12px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Tap to chat</div></div><div id="unread_${u.uid}" class="chat-unread-badge">0</div></div>`; }); el.innerHTML = html; }
-  
-  window.filterChatUsers = function() { var q = (document.getElementById('chatSearchInput').value || '').toLowerCase(); renderChatUsers(chatUsersCache.filter(u => u.displayName.toLowerCase().indexOf(q) >= 0)); listenAllOnlineStatus(); };
-  window._openChatWith = function(uid, displayName) { chatCurrentWith = uid; document.getElementById('chatConvName').innerText = displayName; document.getElementById('chatConvAvatar').innerText = displayName[0]; cancelReply(); var pages = document.querySelectorAll('.page'); pages.forEach(p => p.classList.remove('active')); document.getElementById('chatConvPage').classList.add('active'); document.getElementById('mainNav').style.display = 'none'; document.getElementById('waFloatBtn').style.display = 'none'; listenForChatMessages(uid); listenForIncomingCall(uid); };
-  window.backToChatList = function() { if (chatListenerRef && db) db.ref('chats/' + chatListenerRef + '/messages').off(); chatCurrentWith = null; if(callListenerRef && db) db.ref('webrtc_signals/' + callListenerRef).off(); showChatPage(); };
-  
-  function listenForChatMessages(uid) { var chatId = getChatId(myUid, uid); if (chatListenerRef && db) db.ref('chats/' + chatListenerRef + '/messages').off(); chatListenerRef = chatId; db.ref('chats/' + chatId + '/messages').orderByChild('timestamp').on('value', function(snap) { chatMessagesData = []; snap.forEach(c => { var m = c.val(); m._id = c.key; chatMessagesData.push(m); }); renderChatMessages(chatMessagesData); markChatAsRead(chatId, chatMessagesData); }); }
-  
-  function renderChatMessages(messages) { 
-    var container = document.getElementById('chatMessages'); var html = ''; var prevDate = ''; 
-    for (var idx = 0; idx < messages.length; idx++) { 
-      var msg = messages[idx]; var isMine = msg.from === myUid; var dateStr = new Date(msg.timestamp).toLocaleDateString(); 
-      if (dateStr !== prevDate) { html += `<div class="chat-date-sep"><span>${dateStr}</span></div>`; prevDate = dateStr; } 
-      var tickHtml = isMine ? (msg.read ? ' <span class="chat-tick-read">✓✓</span>' : ' <span class="chat-tick-unread">✓✓</span>') : ''; 
-      var replyHtml = msg.replyTo ? `<div style="background:rgba(0,255,204,0.1);padding:4px 8px;border-radius:5px;border-left:3px solid #00ffcc;margin-bottom:6px;font-size:11px;color:#00ffcc">${escapeHtml(msg.replyTo.text||'📷')}</div>` : ''; 
-      var imageHtml = msg.image ? `<img src="${msg.image}" class="chat-msg-img" onclick="window.open(this.src)">` : ''; 
-      var audioHtml = msg.audio ? `<audio controls class="chat-voice-player" src="${msg.audio}"></audio>` : ''; 
-      html += `<div class="chat-msg-container" style="justify-content:${isMine?'flex-end':'flex-start'}">`;
-      if(!isMine) html += `<button class="chat-reply-btn" onclick="window._setReplyByIndex(${idx})">↩</button>`;
-      html += `<div class="chat-msg-bubble ${isMine?'chat-msg-mine':'chat-msg-other'}">${replyHtml}${imageHtml}${audioHtml}${msg.text?`<div style="color:#fff;font-size:14px;white-space:pre-wrap">${escapeHtml(msg.text)}</div>`:''}<div style="font-size:10px;color:#888;margin-top:4px;text-align:right">${new Date(msg.timestamp).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}${tickHtml}</div></div>`;
-      if(isMine) html += `<button class="chat-reply-btn" onclick="window._setReplyByIndex(${idx})">↩</button><button class="chat-delete-btn" onclick="window._deleteMsg('${msg._id}')" title="Delete">🗑️</button>`;
-      html += '</div>'; 
-    } 
-    container.innerHTML = html; container.scrollTop = container.scrollHeight; 
+function login() {
+  const pass = document.getElementById("passwordInput").value;
+  if (pass === ADMIN_PASSWORD) {
+    localStorage.setItem("adminAuth", "true");
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("adminPanel").classList.remove("hidden");
+    initAdmin();
+  } else {
+    document.getElementById("loginError").innerText = "Wrong password";
   }
+}
 
-  function markChatAsRead(chatId, msgs) { if (!db) return; msgs.forEach(m => { if (m.from !== myUid && !m.read) db.ref('chats/' + chatId + '/messages/' + m._id).update({read: true}); }); }
+function logout() { localStorage.removeItem("adminAuth"); location.reload(); }
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('depositsTab').classList.add('hidden');
+  document.getElementById('withdrawalsTab').classList.add('hidden');
+  document.getElementById('pvpTab').classList.add('hidden');
+  document.getElementById('chatTab').classList.add('hidden');
   
-  window.sendChatMsg = function() { if (!db || !chatCurrentWith) return; var input = document.getElementById('chatMsgInput'); var text = (input.value || '').trim(); if (!text) return; var msgData = { from: myUid, text: text, timestamp: Date.now(), read: false }; if (replyToMsg) { msgData.replyTo = {id: replyToMsg.id, text: replyToMsg.text}; cancelReply(); } db.ref('chats/' + getChatId(myUid, chatCurrentWith) + '/messages').push(msgData, function(err) { if(!err) { input.value = ''; } }); };
-  window._setReplyByIndex = function(idx) { var msg = chatMessagesData[idx]; if (!msg) return; replyToMsg = {id: msg._id, text: msg.text || (msg.image?'📷':(msg.audio?'🎤':''))}; document.getElementById('replyPreview').style.display = 'block'; document.getElementById('replyPreviewText').innerText = replyToMsg.text; document.getElementById('chatMsgInput').focus(); };
-  function cancelReply() { replyToMsg = null; document.getElementById('replyPreview').style.display = 'none'; } window.cancelReply = cancelReply;
+  if(tab === 'deposits') { document.getElementById('depositsTab').classList.remove('hidden'); event.target.classList.add('active'); }
+  else if(tab === 'withdrawals') { document.getElementById('withdrawalsTab').classList.remove('hidden'); event.target.classList.add('active'); }
+  else if(tab === 'pvp') { document.getElementById('pvpTab').classList.remove('hidden'); event.target.classList.add('active'); }
+  else { document.getElementById('chatTab').classList.remove('hidden'); event.target.classList.add('active'); }
+}
 
-  window.handleChatFileUpload = function(e) {
-    var file = e.target.files && e.target.files[0]; if (!file || !db || !chatCurrentWith) return;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      var img = new Image(); img.onload = function() { var c = document.createElement('canvas'); var w=600, h=600, iw=img.width, ih=img.height; if(iw>w){ih*=w/iw;iw=w;} if(ih>h){iw*=h/ih;ih=h;} c.width=Math.round(iw); c.height=Math.round(ih); c.getContext('2d').drawImage(img,0,0,c.width,c.height); var compressed = c.toDataURL('image/jpeg', 0.5); db.ref('chats/' + getChatId(myUid, chatCurrentWith) + '/messages').push({ from: myUid, image: compressed, timestamp: Date.now(), read: false }); }; img.src = ev.target.result;
-    }; reader.readAsDataURL(file); e.target.value = '';
-  };
+// --- DEPOSITS ---
+function loadDeposits() {
+  db.ref('deposit_requests').on('value', (snap) => {
+    const tbody = document.getElementById("depositBody");
+    tbody.innerHTML = "";
+    let pending = 0;
+    snap.forEach((child) => {
+      const id = child.key;
+      const d = child.val();
+      const status = d.status || "pending";
+      if(status === 'pending') pending++;
+      const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-pending';
+      
+      // Default 1 MWK = 1 Coin if coinsRequested is missing
+      const coinsToCredit = d.coinsRequested || d.amountMWK; 
+      
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${d.uid}</td>
+        <td>${d.amountMWK}</td>
+        <td style="color:#00ffcc">${d.txId || 'N/A'}</td>
+        <td>${new Date(d.timestamp).toLocaleString()}</td>
+        <td><span class="status ${statusClass}">${status}</span></td>
+        <td>
+          ${status === 'pending' ? `
+            <button class="btn btn-approve" onclick="approveDeposit('${id}','${d.uid}',${coinsToCredit})">Approve</button>
+            <button class="btn btn-reject" onclick="declineDeposit('${id}')">Decline</button>
+          ` : '-'}
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('pendingDeposits').innerText = pending;
+  });
+}
 
-  window._deleteMsg = function(msgId) { if (!db || !chatCurrentWith || !msgId) return; if (confirm('Delete this message?')) { db.ref('chats/' + getChatId(myUid, chatCurrentWith) + '/messages/' + msgId).remove(); } };
-  window.clearChat = function() { if (!db || !chatCurrentWith) return; if (confirm('Clear all messages?')) { db.ref('chats/' + getChatId(myUid, chatCurrentWith) + '/messages').remove(); } };
+function approveDeposit(id, uid, coins) {
+  if (!confirm(`Add ${coins} coins to ${uid}?`)) return;
+  db.ref('leaderboard_all/' + uid + '/coins').once('value', snap => {
+    const current = snap.val() || 0;
+    db.ref('leaderboard_all/' + uid).update({ coins: current + coins });
+    db.ref('deposit_requests/' + id).update({ status: 'approved' });
+    alert(`Approved! ${coins} coins added to ${uid}.`);
+  });
+}
 
-  window.toggleVoiceNote = function() { if (isRecording) { stopVoiceNote(); } else { startVoiceNote(); } };
-  function startVoiceNote() { if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { alert('Voice recording not supported'); return; } navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) { isRecording = true; audioChunks = []; recordingSeconds = 0; document.getElementById('recordingStatus').style.display = 'block'; document.getElementById('voiceNoteBtn').style.background = '#ff6b6b'; mediaRecorder = new MediaRecorder(stream); mediaRecorder.ondataavailable = function(e) { audioChunks.push(e.data); }; mediaRecorder.onstop = function() { stream.getTracks().forEach(t => t.stop()); var blob = new Blob(audioChunks, { type: 'audio/webm' }); var reader = new FileReader(); reader.onload = function(ev) { if (db && chatCurrentWith) { db.ref('chats/' + getChatId(myUid, chatCurrentWith) + '/messages').push({ from: myUid, audio: ev.target.result, timestamp: Date.now(), read: false }); } }; reader.readAsDataURL(blob); }; mediaRecorder.start(); recordingTimer = setInterval(function() { recordingSeconds++; }, 1000); }).catch(function(err) { alert('Microphone error: ' + err.message); }); }
-  function stopVoiceNote() { if (mediaRecorder && mediaRecorder.state !== 'inactive') { mediaRecorder.stop(); } isRecording = false; clearInterval(recordingTimer); document.getElementById('recordingStatus').style.display = 'none'; document.getElementById('voiceNoteBtn').style.background = '#1a1a1a'; }
+function declineDeposit(id) {
+  if (!confirm('Decline this deposit?')) return;
+  db.ref('deposit_requests/' + id).update({ status: 'declined' });
+}
 
-  function listenForIncomingCall(uid) {
-    var signalRef = myUid + '_' + uid; if (myUid < uid) signalRef = uid + '_' + myUid;
-    if (callListenerRef && db) db.ref('webrtc_signals/' + callListenerRef).off(); callListenerRef = signalRef;
-    db.ref('webrtc_signals/' + signalRef + '/offer').on('value', function(snap) { var offer = snap.val(); if (offer && offer.to === myUid && !peerConnection) { if (confirm('Incoming video call from ' + (offer.fromName || offer.from) + '. Accept?')) { acceptVideoCall(offer, signalRef); } else { db.ref('webrtc_signals/' + signalRef + '/reject').set({ from: myUid, timestamp: Date.now() }); } } });
-    db.ref('webrtc_signals/' + signalRef + '/answer').on('value', function(snap) { var answer = snap.val(); if (answer && peerConnection) { peerConnection.setRemoteDescription(new RTCSessionDescription(answer)); } });
-    db.ref('webrtc_signals/' + signalRef + '/reject').on('value', function(snap) { var rej = snap.val(); if (rej && rej.from !== myUid) { endVideoCall(); alert('Call rejected'); } });
-    db.ref('webrtc_signals/' + signalRef + '/end').on('value', function(snap) { var endSig = snap.val(); if (endSig && endSig.from !== myUid) { endVideoCall(); } });
-    db.ref('webrtc_signals/' + signalRef + '/candidate').on('value', function(snap) { var cand = snap.val(); if (cand && peerConnection && cand.from !== myUid) { peerConnection.addIceCandidate(new RTCIceCandidate(cand.candidate)).catch(function(){}); } });
-  }
+// --- WITHDRAWALS ---
+function loadWithdrawals() {
+  db.ref('withdraw_requests').on('value', (snap) => {
+    const tbody = document.getElementById("withdrawalBody");
+    tbody.innerHTML = "";
+    let pending = 0;
+    snap.forEach((child) => {
+      const id = child.key;
+      const w = child.val();
+      const status = w.status || "pending";
+      if(status === 'pending') pending++;
+      const statusClass = status === 'approved' ? 'status-approved' : status === 'declined' ? 'status-declined' : 'status-pending';
+      
+      const userData = cachedUsers[w.uid] || {};
+      const phone = userData.phone || 'N/A';
+      const network = userData.network || 'N/A';
+      const withdrawMWK = w.amountMWK || w.mwk || 0;
+      const deductCoins = w.coins || withdrawMWK; // Fallback logic
 
-  window.startVideoCall = function() {
-    if (!db || !chatCurrentWith) return;
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(function(stream) {
-      localStream = stream; document.getElementById('localVideo').srcObject = stream; document.getElementById('videoCallOverlay').style.display = 'flex'; document.getElementById('callStatusText').innerText = 'Calling...'; callSeconds = 0; document.getElementById('callTimer').innerText = '00:00';
-      peerConnection = new RTCPeerConnection(iceServers); stream.getTracks().forEach(t => peerConnection.addTrack(t, stream));
-      peerConnection.ontrack = function(e) { document.getElementById('remoteVideo').srcObject = e.streams[0]; document.getElementById('callStatusText').innerText = 'Connected'; startCallTimer(); };
-      peerConnection.onicecandidate = function(e) { if (e.candidate) { db.ref('webrtc_signals/' + callListenerRef + '/candidate').set({ from: myUid, candidate: e.candidate, timestamp: Date.now() }); } };
-      peerConnection.createOffer().then(function(offer) { return peerConnection.setLocalDescription(offer); }).then(function() { db.ref('webrtc_signals/' + callListenerRef + '/offer').set({ from: myUid, fromName: myUid, to: chatCurrentWith, sdp: peerConnection.localDescription, timestamp: Date.now() }); });
-    }).catch(function(err) { alert('Camera error: ' + err.message); });
-  };
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${w.uid}</td>
+        <td>MWK ${withdrawMWK}</td>
+        <td>${phone}</td>
+        <td>${network}</td>
+        <td>${new Date(w.timestamp).toLocaleString()}</td>
+        <td><span class="status ${statusClass}">${status}</span></td>
+        <td>
+          ${status === 'pending' ? `
+            <button class="btn btn-approve" onclick="approveWithdrawal('${id}','${w.uid}',${deductCoins})">Approve</button>
+            <button class="btn btn-reject" onclick="rejectWithdrawal('${id}','${w.uid}',${deductCoins})">Reject</button>
+          ` : '-'}
+          <button class="btn btn-ban" onclick="banUser('${w.uid}')">Ban</button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('pendingCount').innerText = pending;
+  });
+}
 
-  function acceptVideoCall(offer, signalRef) {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(function(stream) {
-      localStream = stream; document.getElementById('localVideo').srcObject = stream; document.getElementById('videoCallOverlay').style.display = 'flex'; document.getElementById('callStatusText').innerText = 'Connecting...'; callSeconds = 0; document.getElementById('callTimer').innerText = '00:00';
-      peerConnection = new RTCPeerConnection(iceServers); stream.getTracks().forEach(t => peerConnection.addTrack(t, stream));
-      peerConnection.ontrack = function(e) { document.getElementById('remoteVideo').srcObject = e.streams[0]; document.getElementById('callStatusText').innerText = 'Connected'; startCallTimer(); };
-      peerConnection.onicecandidate = function(e) { if (e.candidate) { db.ref('webrtc_signals/' + signalRef + '/candidate').set({ from: myUid, candidate: e.candidate, timestamp: Date.now() }); } };
-      peerConnection.setRemoteDescription(new RTCSessionDescription(offer.sdp)).then(function() { return peerConnection.createAnswer(); }).then(function(answer) { return peerConnection.setLocalDescription(answer); }).then(function() { db.ref('webrtc_signals/' + signalRef + '/answer').set({ from: myUid, sdp: peerConnection.localDescription, timestamp: Date.now() }); });
-    }).catch(function(err) { alert('Camera error: ' + err.message); });
-  }
+function approveWithdrawal(id, uid, coins) {
+  if (!confirm(`Approve withdrawal for ${uid}? Make sure you sent the money!`)) return;
+  db.ref('withdraw_requests/' + id).update({ status: 'approved' });
+  alert(`Marked as Paid!`);
+}
 
-  function startCallTimer() { clearInterval(callTimerInterval); callTimerInterval = setInterval(function() { callSeconds++; var m = Math.floor(callSeconds/60).toString().padStart(2,'0'); var s = (callSeconds%60).toString().padStart(2,'0'); document.getElementById('callTimer').innerText = m + ':' + s; }, 1000); }
+function rejectWithdrawal(id, uid, coins) {
+  if (!confirm(`Reject and refund ${coins} coins to ${uid}?`)) return;
+  db.ref('leaderboard_all/' + uid + '/coins').once('value', (snap) => {
+    const current = snap.val() || 0;
+    db.ref('leaderboard_all/' + uid).update({ coins: current + coins });
+    db.ref('withdraw_requests/' + id).update({ status: 'declined' });
+    alert(`Rejected. ${coins} coins refunded to ${uid}.`);
+  });
+}
 
-  var mutedCall = false;
-  window.toggleMuteCall = function() { if (!localStream) return; localStream.getAudioTracks().forEach(t => { t.enabled = !t.enabled; mutedCall = !t.enabled; }); document.getElementById('muteCallBtn').innerText = mutedCall ? '🔇' : '🎤'; document.getElementById('muteCallBtn').style.background = mutedCall ? '#ff6b6b' : '#333'; };
+// --- PVP MATCHES & LIVE BOARD ---
+function loadPvPGames() {
+  db.ref('pvp_games').on('value', (snap) => {
+    const tbody = document.getElementById("pvpBody");
+    tbody.innerHTML = "";
+    let active = 0;
+    
+    var games = [];
+    snap.forEach(c => { games.push({ id: c.key, ...c.val() }); });
+    games.sort((a, b) => (b.created || 0) - (a.created || 0)); // Newest first
+
+    games.forEach(g => {
+      if(g.status === 'playing') active++;
+      const statusClass = g.status === 'playing' ? 'status-playing' : (g.winner === 'draw' ? 'status-draw' : 'status-finished');
+      const shortId = g.id.substring(g.id.length - 6);
+      
+      let winnerText = '-';
+      if (g.winner === 'draw') winnerText = '🤝 Draw/Refund';
+      else if (g.winner) winnerText = g.winner === g.p1 ? `🔴 P1 (${g.p1})` : `⚫ P2 (${g.p2})`;
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="font-family:monospace;color:#888">${shortId}</td>
+        <td>🔴 ${g.p1}</td>
+        <td>⚫ ${g.p2}</td>
+        <td>MWK ${g.entryMWK || 0}</td>
+        <td><span class="status ${statusClass}">${g.status}${g.winner === 'draw' ? ' (Draw)' : ''}</span></td>
+        <td style="color:#51cf66;font-weight:bold">${winnerText}</td>
+        <td>
+          ${g.status === 'playing' ? `
+            <button class="btn btn-view" onclick="viewPvPBoard('${g.id}')">👁️ View</button>
+            <button class="btn btn-p1" onclick="forceWinPvP('${g.id}','${g.p1}','${g.p2}',${g.winMWK || 0})">P1 Wins</button>
+            <button class="btn btn-p2" onclick="forceWinPvP('${g.id}','${g.p2}','${g.p1}',${g.winMWK || 0})">P2 Wins</button>
+            <button class="btn btn-refund" onclick="refundPvP('${g.id}','${g.p1}','${g.p2}',${g.entryMWK || 0})">Refund Both</button>
+          ` : `
+            <button class="btn btn-view" onclick="viewPvPBoard('${g.id}')" style="background:#333;color:#fff">👁️ View</button>
+          `}
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('activeMatches').innerText = active;
+  });
+}
+
+// VIEW LIVE BOARD
+function viewPvPBoard(gameId) {
+  db.ref('pvp_games/' + gameId).once('value', function(snap) {
+    var game = snap.val();
+    if (!game) { alert('Game not found'); return; }
+    
+    var board = game.board || [];
+    var turnText = game.turn === 1 ? '🔴 P1 Turn' : '⚫ P2 Turn';
+    if (game.status !== 'playing') turnText = '🏁 Game Over';
+    
+    document.getElementById('modalGameInfo').innerText = `🔴 ${game.p1} vs ⚫ ${game.p2} | Stake: MWK ${game.entryMWK} | ${turnText}`;
+    
+    var drawInfo = document.getElementById('modalDrawInfo');
+    if (game.drawTargetPlayer && game.drawCounter > 0) {
+      var movesLeft = 12 - game.drawCounter;
+      var lonePlayer = game.drawTargetPlayer === 1 ? game.p1 : game.p2;
+      drawInfo.innerText = '⏱️ ' + lonePlayer + ' has 1 piece! Draw in ' + movesLeft + ' moves';
+      drawInfo.style.display = 'block';
+    } else {
+      drawInfo.style.display = 'none';
+    }
+
+    var html = '';
+    for (var i = 0; i < 64; i++) {
+      var r = Math.floor(i / 8); var c = i % 8;
+      var isDark = (r + c) % 2 === 1;
+      var p = board[i];
+      html += `<div class="modal-sq ${isDark?'dark':'light'}">`;
+      if (p !== 0) {
+        html += `<div class="modal-piece ${p > 0 ? 'p1' : 'p2'} ${Math.abs(p) === 2 ? 'king' : ''}"></div>`;
+      }
+      html += '</div>';
+    }
+    document.getElementById('modalBoardContainer').innerHTML = html;
+    document.getElementById('boardModal').style.display = 'flex';
+  });
+}
+
+function closeBoardModal() { document.getElementById('boardModal').style.display = 'none'; }
+
+// Force Win Logic (Fix: correctly use winMWK and update stats properly)
+function forceWinPvP(gameId, winnerUid, loserUid, winMWK) {
+  if (!confirm(`Force ${winnerUid} to WIN and credit MWK ${winMWK}?`)) return;
   
-  window.endVideoCall = function() {
-    if (peerConnection) { peerConnection.close(); peerConnection = null; }
-    if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-    document.getElementById('videoCallOverlay').style.display = 'none'; document.getElementById('localVideo').srcObject = null; document.getElementById('remoteVideo').srcObject = null;
-    clearInterval(callTimerInterval);
-    if (db && callListenerRef) { db.ref('webrtc_signals/' + callListenerRef + '/end').set({ from: myUid, timestamp: Date.now() }); }
-  };
+  var updates = {};
+  updates['pvp_games/' + gameId + '/status'] = 'finished';
+  updates['pvp_games/' + gameId + '/winner'] = winnerUid;
 
-  try { if (myUid) setOnlineStatus(true); window.addEventListener('beforeunload', function() { setOnlineStatus(false); }); } catch(e) {}
-})();
+  db.ref('leaderboard_all/' + winnerUid).once('value', wSnap => {
+    var wData = wSnap.val() || {};
+    updates['leaderboard_all/' + winnerUid + '/coins'] = (wData.coins || 0) + winMWK;
+    updates['leaderboard_all/' + winnerUid + '/gamesPlayed'] = (wData.gamesPlayed || 0) + 1;
+    updates['leaderboard_all/' + winnerUid + '/gamesWon'] = (wData.gamesWon || 0) + 1;
+
+    db.ref('leaderboard_all/' + loserUid).once('value', lSnap => {
+      var lData = lSnap.val() || {};
+      updates['leaderboard_all/' + loserUid + '/gamesPlayed'] = (lData.gamesPlayed || 0) + 1;
+      updates['leaderboard_all/' + loserUid + '/gamesLost'] = (lData.gamesLost || 0) + 1;
+
+      db.ref().update(updates).then(() => alert('Match resolved! Winner credited.')).catch(e => alert('Error: '+e.message));
+    });
+  });
+}
+
+// Refund Logic (Fix: correctly use entryMWK directly, not entryMWK * 50)
+function refundPvP(gameId, p1, p2, entryMWK) {
+  if (!confirm(`CANCEL match and refund both players MWK ${entryMWK}?`)) return;
+  var updates = {};
+  updates['pvp_games/' + gameId + '/status'] = 'finished';
+  updates['pvp_games/' + gameId + '/winner'] = 'draw'; // Mark as draw/refund
+
+  db.ref('leaderboard_all/' + p1 + '/coins').once('value', p1Snap => {
+    updates['leaderboard_all/' + p1 + '/coins'] = (p1Snap.val() || 0) + entryMWK;
+    db.ref('leaderboard_all/' + p2 + '/coins').once('value', p2Snap => {
+      updates['leaderboard_all/' + p2 + '/coins'] = (p2Snap.val() || 0) + entryMWK;
+      db.ref().update(updates).then(() => alert('Match cancelled! Both refunded.')).catch(e => alert('Error: '+e.message));
+    });
+  });
+}
+
+// --- USERS, BAN & CHAT ---
+function banUser(username) { if (!confirm(`BAN ${username}?`)) return; db.ref('leaderboard_all/' + username).update({ banned: true }); alert(`${username} banned.`); }
+function unbanUser(username) { if (!confirm(`UNBAN ${username}?`)) return; db.ref('leaderboard_all/' + username).update({ banned: false }); alert(`${username} unbanned.`); }
+function editCoins(username) { const newCoins = prompt(`Enter NEW coin balance for ${username}:`); if (newCoins !== null && !isNaN(newCoins)) { db.ref('leaderboard_all/' + username).update({ coins: parseInt(newCoins) }); alert(`Coins updated.`); } }
+
+function updateOnlineCount() { const count = document.querySelectorAll('.online-dot').length; document.getElementById('onlineUsers').innerText = count; }
+
+function loadUsers() {
+  db.ref('leaderboard_all').on('value', snap => {
+    cachedUsers = {};
+    const users = [];
+    snap.forEach(c => {
+      if(c.key !== ADMIN_NAME) {
+        var d = c.val() || {};
+        cachedUsers[c.key] = d;
+        users.push({ name: c.key, coins: d.coins || 0, banned: d.banned || false });
+      }
+    });
+    users.sort((a, b) => b.coins - a.coins);
+    document.getElementById('totalUsers').innerText = users.length;
+    
+    let html = '';
+    users.forEach(u => {
+      const nameClass = u.banned ? 'u-name banned-text' : 'u-name';
+      const banBtn = u.banned 
+        ? `<button class="btn-small btn-unban" onclick="event.stopPropagation(); unbanUser('${u.name}')">Unban</button>`
+        : `<button class="btn-small btn-ban" onclick="event.stopPropagation(); banUser('${u.name}')">Ban</button>`;
+      html += `
+        <div class="user-item" id="u-${u.name}" onclick="openAdminChat('${u.name}')">
+          <div>
+            <div class="${nameClass}"><span class="offline-dot" id="dot-${u.name}"></span>${u.name} ${u.banned ? '🚫' : ''}</div>
+            <div class="u-coins">${u.coins.toLocaleString()} 🪙</div>
+          </div>
+          <div>
+            <button class="btn-small btn-edit" onclick="event.stopPropagation(); editCoins('${u.name}')">✏️</button>
+            ${banBtn}
+          </div>
+        </div>`;
+    });
+    document.getElementById('usersListPanel').innerHTML = html || '<div class="empty-state">No users found</div>';
+    
+    users.forEach(u => {
+      db.ref('online_status/' + u.name).on('value', psnap => {
+        const dot = document.getElementById('dot-' + u.name);
+        if(dot) {
+          const sd = psnap.val();
+          dot.className = (sd && sd.online) ? 'online-dot' : 'offline-dot';
+          updateOnlineCount();
+        }
+      });
+    });
+  });
+}
+
+function openAdminChat(username) {
+  currentChatUser = username;
+  document.getElementById('chatHeader').innerHTML = `<span>Chatting with: ${username}</span>`;
+  document.getElementById('adminMsgInput').disabled = false;
+  document.getElementById('adminSendBtn').disabled = false;
+  document.querySelectorAll('.user-item').forEach(el => el.classList.remove('active'));
+  const userEl = document.getElementById('u-' + username);
+  if(userEl) userEl.classList.add('active');
+  
+  const chatId = [ADMIN_NAME, username].sort().join('_');
+  db.ref('chats/' + chatId + '/messages').off(); 
+  db.ref('chats/' + chatId + '/messages').orderByChild('timestamp').limitToLast(100).on('value', snap => {
+    let html = '';
+    snap.forEach(c => {
+      const m = c.val();
+      const isMe = m.from === ADMIN_NAME;
+      const time = new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      let content = escapeHtml(m.text || '');
+      if(m.image) content += `<img src="${m.image}" style="max-width:150px;border-radius:5px;display:block;margin-top:5px;cursor:pointer" onclick="window.open(this.src)">`;
+      if(m.audio) content += `<audio controls src="${m.audio}" style="height:30px;width:150px;margin-top:5px"></audio>`;
+      if(m.fileData) content += `<a href="${m.fileData}" download style="color:#00ccff; font-size:12px; display:inline-block; margin-top:5px;">📎 ${escapeHtml(m.fileName || 'File')}</a>`;
+      
+      html += `
+        <div class="msg-bubble ${isMe ? 'msg-admin' : 'msg-user'}">
+          ${content}
+          <div style="font-size:10px;color:#888;margin-top:4px;text-align:right">${time}</div>
+        </div>`;
+      if(!isMe && !m.read) db.ref('chats/' + chatId + '/messages/' + c.key).update({read: true});
+    });
+    const msgArea = document.getElementById('chatMessages');
+    msgArea.innerHTML = html || '<div class="empty-state">No messages yet.</div>';
+    msgArea.scrollTop = msgArea.scrollHeight;
+  });
+}
+
+function sendAdminMsg() {
+  const input = document.getElementById('adminMsgInput');
+  const text = input.value.trim();
+  if(!text || !currentChatUser) return;
+  const chatId = [ADMIN_NAME, currentChatUser].sort().join('_');
+  db.ref('chats/' + chatId + '/messages').push({ from: ADMIN_NAME, text: text, timestamp: Date.now(), read: false }).then(() => input.value = '');
+}
+
+// FEATURE 1: Admin File Upload to Chat
+function handleAdminFileUpload(e) {
+  var file = e.target.files && e.target.files[0];
+  if (!file || !currentChatUser) return;
+  var chatId = [ADMIN_NAME, currentChatUser].sort().join('_');
+  var isImage = file.type.startsWith('image/');
+  
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    if (isImage) {
+      var img = new Image();
+      img.onload = function() {
+        var c = document.createElement('canvas');
+        var w=600, h=600, iw=img.width, ih=img.height;
+        if(iw>w){ih*=w/iw;iw=w;} if(ih>h){iw*=h/ih;ih=h;}
+        c.width=Math.round(iw); c.height=Math.round(ih);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        var base64 = c.toDataURL('image/jpeg', 0.5);
+        db.ref('chats/' + chatId + '/messages').push({ from: ADMIN_NAME, image: base64, timestamp: Date.now(), read: false });
+      };
+      img.src = ev.target.result;
+    } else {
+      if (file.size > 1024 * 1024) {
+        alert("File size must be less than 1MB."); e.target.value = ''; return;
+      }
+      db.ref('chats/' + chatId + '/messages').push({ from: ADMIN_NAME, fileData: ev.target.result, fileName: file.name, timestamp: Date.now(), read: false });
+    }
+  };
+  reader.readAsDataURL(file);
+  e.target.value = ''; // reset input
+}
+
+function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+
+document.getElementById('adminMsgInput').addEventListener('keypress', function(e) { if(e.key === 'Enter') sendAdminMsg(); });
+
+function initAdmin() { loadDeposits(); loadWithdrawals(); loadPvPGames(); loadUsers(); }
+
+window.onload = function() {
+  if (localStorage.getItem("adminAuth") === "true") {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("adminPanel").classList.remove("hidden");
+    initAdmin();
+  }
+}
 </script>
 </body>
-	</html>
+																																					 </html>
